@@ -183,7 +183,7 @@ async function loadProductos() {
            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22><rect width=%2252%22 height=%2252%22 fill=%22%23f0e6ee%22/><text x=%2226%22 y=%2232%22 text-anchor=%22middle%22 font-size=%2220%22>🍓</text></svg>'">
       <div class="list-info">
         <div class="list-name">${p.nombre}</div>
-        <div class="list-meta">${p.precio} · ${p.tema} · ${p.tag}</div>
+        <div class="list-meta">${p.precio} · ${p.tema ?? ''} · ${p.tipo ?? 'Desayunos'} · ${p.tag}</div>
       </div>
       <div class="list-actions">
         <label class="toggle-wrap" title="${p.activo ? 'Visible' : 'Oculto'}">
@@ -404,14 +404,22 @@ function formProducto(p) {
         </select>
       </div>
     </div>
-    <div class="form-field">
-      <label>Categoría</label>
-      <select id="f-tema">
-        <option ${(!p || p.tema === 'Cumpleaños adulto') ? 'selected' : ''}>Cumpleaños adulto</option>
-        <option ${p?.tema === 'Cumpleaños infantil' ? 'selected' : ''}>Cumpleaños infantil</option>
-        <option ${p?.tema === 'Brunch Grupal / Saludable' ? 'selected' : ''}>Brunch Grupal / Saludable</option>
-        <option ${p?.tema === 'Box de Regalo' ? 'selected' : ''}>Box de Regalo</option>
-      </select>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Categoría</label>
+        <select id="f-tema">
+          <option ${(!p || p.tema === 'Adulto' || p.tema === 'Cumpleaños adulto') ? 'selected' : ''}>Adulto</option>
+          <option ${(p?.tema === 'Infantil' || p?.tema === 'Cumpleaños infantil') ? 'selected' : ''}>Infantil</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Tipo de producto</label>
+        <select id="f-tipo">
+          <option ${(!p || !p.tipo || p.tipo === 'Desayunos') ? 'selected' : ''}>Desayunos</option>
+          <option ${p?.tipo === 'Box de regalo' ? 'selected' : ''}>Box de regalo</option>
+          <option ${p?.tipo === 'Brunch grupales' ? 'selected' : ''}>Brunch grupales</option>
+        </select>
+      </div>
     </div>
     <div class="form-field form-check">
       <label>
@@ -534,6 +542,7 @@ async function guardar(type, id) {
         precio:      document.getElementById('f-precio').value.trim(),
         tag:         document.getElementById('f-tag').value,
         tema:        document.getElementById('f-tema').value,
+        tipo:        document.getElementById('f-tipo').value,
         activo:      document.getElementById('f-activo').checked,
         imagen_url
       };

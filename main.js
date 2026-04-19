@@ -33,13 +33,11 @@ function cardHTML(p) {
   if (p.imagen_url) waText += `\nFoto de referencia: ${p.imagen_url}`;
   const waMsg  = encodeURIComponent(waText);
   const waUrl  = `https://wa.me/542995326695?text=${waMsg}`;
-  const infantil = p.tema === 'Cumpleaños infantil';
-  const premium  = p.tag  === '✨ Con mini torta';
-  const esCumple = p.tema === 'Cumpleaños adulto' || p.tema === 'Cumpleaños infantil';
-  const badgeTema = !esCumple ? p.tema : null;
+  const infantil = p.tema === 'Infantil' || p.tema === 'Cumpleaños infantil';
+  const tipo     = p.tipo || 'Desayunos';
 
   return `
-    <article class="card" data-tema="${escHTML(p.tema)}">
+    <article class="card" data-tipo="${escHTML(tipo)}">
       <div class="card-img-wrap">
         <img class="card-img"
              src="${escHTML(p.imagen_url || 'images/c2.jpg')}"
@@ -48,7 +46,7 @@ function cardHTML(p) {
         <span class="card-badge ${infantil ? 'card-badge--infantil' : 'card-badge--adulto'}">
           ${infantil ? 'Infantil' : 'Adulto'}
         </span>
-        ${badgeTema ? `<span class="card-badge card-badge--tema">${escHTML(badgeTema)}</span>` : premium ? '<span class="card-badge card-badge--premium">Premium</span>' : ''}
+        <span class="card-badge card-badge--tema">${escHTML(tipo)}</span>
       </div>
       <div class="card-body">
         <h3 class="card-nombre">${escHTML(p.nombre)}</h3>
@@ -69,14 +67,14 @@ function cardHTML(p) {
 }
 
 // ── Filtros y búsqueda ────────────────────────────────
-let activeTema = 'Todos';
+let activeTipo = 'Todos';
 
 function applyFilters() {
   const q = document.getElementById('search').value.trim().toLowerCase();
   let visible = 0;
 
   document.querySelectorAll('.card').forEach(card => {
-    const matchTema = activeTema === 'Todos' || card.dataset.tema === activeTema;
+    const matchTema = activeTipo === 'Todos' || card.dataset.tipo === activeTipo;
     const matchQ    = !q || card.textContent.toLowerCase().includes(q);
     if (matchTema && matchQ) {
       card.classList.remove('hidden-card');
@@ -283,7 +281,7 @@ async function init() {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      activeTema = btn.dataset.tema;
+      activeTipo = btn.dataset.tipo;
       applyFilters();
     });
   });
