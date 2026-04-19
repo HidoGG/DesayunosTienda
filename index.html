@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Las Santiagueñas · Desayunos Sorpresa en Neuquén y Plottier</title>
+  <meta name="description" content="Desayunos sorpresa personalizados en Neuquén y Plottier. Cumpleaños, Día de la Madre, regalos especiales. Entrega a domicilio. ¡Consultá por WhatsApp!">
+  <meta name="keywords" content="desayunos sorpresa Neuquén, desayunos Plottier, desayunos personalizados, regalos Neuquén, desayuno cumpleaños">
+  <meta name="author" content="Las Santiagueñas">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Las Santiagueñas · Desayunos Sorpresa">
+  <meta property="og:description" content="Regalos personalizados, desayunos sorpresa y mini tortas con envío a domicilio en Neuquén y Plottier. ¡Hacé tu pedido por WhatsApp!">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:url" content="https://las-santiaguenas.vercel.app/">
+  <meta property="og:image" content="https://las-santiaguenas.vercel.app/images/logo-og.jpg">
+  <meta property="og:image:secure_url" content="https://las-santiaguenas.vercel.app/images/logo-og.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="300">
+  <meta property="og:image:height" content="300">
+
+  <link rel="icon" type="image/jpeg" href="images/logo-og.jpg">
+
+  <meta name="theme-color" content="#B84E7C">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- JSON-LD SEO Local -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FoodEstablishment",
+    "name": "Las Santiagueñas",
+    "description": "Desayunos sorpresa personalizados para momentos especiales en Neuquén y Plottier, Argentina.",
+    "url": "https://lassantiaguenas.vercel.app",
+    "telephone": "+542995326695",
+    "servesCuisine": "Desayunos y meriendas",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Plottier",
+      "addressRegion": "Neuquén",
+      "addressCountry": "AR"
+    },
+    "sameAs": [
+      "https://instagram.com/Lassantiaguenas_"
+    ],
+    "openingHours": "Mo-Su 08:00-20:00"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-content">
+      <div class="brand-wrap">
+        <span class="brand-icon">🎀</span>
+        <div>
+          <h1 class="brand-name">Las Santiagueñas</h1>
+          <p class="brand-tagline">Desayunos sorpresa · Neuquén &amp; Plottier</p>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a href="https://instagram.com/Lassantiaguenas_" target="_blank" rel="noopener" class="nav-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          <span class="nav-link-text">@Lassantiaguenas_</span>
+        </a>
+        <a href="https://wa.me/542995326695?text=Hola!%20Vi%20el%20cat%C3%A1logo%20y%20quiero%20consultar%20%F0%9F%8E%80" target="_blank" rel="noopener" class="nav-link nav-link--wa">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.993l6.304-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.002-1.368l-.359-.214-3.721.976.993-3.624-.234-.372A9.818 9.818 0 1112 21.818z"/></svg>
+          <span class="nav-link-text">Consultá por WhatsApp</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">✨ Hechos con amor en Neuquén</p>
+      <h2 class="hero-title">El regalo que se recuerda<br><em>para siempre</em></h2>
+      <p class="hero-subtitle">Desayunos sorpresa personalizados para cumpleaños, Día de la Madre y momentos especiales. Entrega a domicilio en Plottier y Neuquén.</p>
+      <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20un%20desayuno%20sorpresa%20%F0%9F%8E%80" target="_blank" rel="noopener" class="hero-cta">
+        Pedir mi desayuno
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.993l6.304-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.002-1.368l-.359-.214-3.721.976.993-3.624-.234-.372A9.818 9.818 0 1112 21.818z"/></svg>
+      </a>
+    </div>
+    <div class="hero-badges">
+      <div class="badge">
+        <span class="badge-icon">🚚</span>
+        <span>Envío gratis en Plottier</span>
+      </div>
+      <div class="badge">
+        <span class="badge-icon">✍️</span>
+        <span>100% personalizado</span>
+      </div>
+      <div class="badge">
+        <span class="badge-icon">⚡</span>
+        <span>Confirmación el mismo día</span>
+      </div>
+      <div class="badge">
+        <span class="badge-icon">💬</span>
+        <span>Se trabaja con seña</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2 class="section-title">¿Cómo lo pedís?</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">01</div>
+          <div class="step-icon">💬</div>
+          <h3>Elegís tu desayuno</h3>
+          <p>Explorá el catálogo y elegí el que más te guste, o consultanos por una opción personalizada.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-number">02</div>
+          <div class="step-icon">📋</div>
+          <h3>Coordinamos los detalles</h3>
+          <p>Nos contactás por WhatsApp, confirmamos el pedido con una seña y acordamos fecha y dirección de entrega.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-number">03</div>
+          <div class="step-icon">🎀</div>
+          <h3>Lo recibís en la puerta</h3>
+          <p>Entregamos el desayuno listo para sorprender, armado con amor y cada detalle en su lugar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section class="catalog-section">
+    <div class="container">
+      <h2 class="section-title">Nuestros Desayunos</h2>
+      <p class="section-subtitle">Desde $75.000 · Con mini torta desde $85.000</p>
+
+      <!-- Filtros y búsqueda -->
+      <div class="catalog-controls">
+        <div class="filter-bar" id="filters">
+          <button class="filter-btn active" data-tema="Todos">Todos</button>
+          <button class="filter-btn" data-tema="Cumpleaños adulto">Cumpleaños adulto</button>
+          <button class="filter-btn" data-tema="Cumpleaños infantil">Cumpleaños infantil</button>
+        </div>
+        <div class="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="search" type="text" placeholder="Buscar desayuno..." autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Grid de productos — renderizado por main.js desde Supabase -->
+      <div class="grid" id="grid">
+        <!-- skeletons mientras carga -->
+        <div class="card-skeleton"></div>
+        <div class="card-skeleton"></div>
+        <div class="card-skeleton"></div>
+        <div class="card-skeleton"></div>
+        <div class="card-skeleton"></div>
+        <div class="card-skeleton"></div>
+
+        <article class="card" data-tema="Cumpleaños infantil">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c2.jpg" alt="placeholder" loading="lazy">
+            <span class="card-badge card-badge--infantil">Infantil</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Stitch Azul</h3>
+            <p class="card-desc">Bandeja fibrofácil · taza · medialunas · cookies de vainilla · sandwich jamón y queso · yogurt con cereal · frutillas · jugo en botella · infusiones · stickers y decoración temática Stitch · arreglo con globos azules, lila y rosa · tarjeta personalizada</p>
+            <div class="card-footer">
+              <span class="card-precio">$75.000</span>
+              <span class="card-tag">🎁 Estándar</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Stitch%20Azul%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños infantil">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c3.jpg" alt="Desayuno Stitch con Globo Gigante de helio, decoración azul y cromada - Las Santiagueñas Plottier" loading="lazy">
+            <span class="card-badge card-badge--infantil">Infantil</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Stitch con Globo Gigante</h3>
+            <p class="card-desc">Bandeja fibrofácil · chocolatada · snacks · vaso decorado · globo gigante Stitch helio · arreglo con globos azules y cromados · tarjeta dedicatoria</p>
+            <div class="card-footer">
+              <span class="card-precio">$85.000</span>
+              <span class="card-tag">✨ Con mini torta</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Stitch%20con%20Globo%20Gigante%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños adulto">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c4.jpg" alt="Desayuno Negro y Dorado elegante con globo burbuja y estrellas - Las Santiagueñas Neuquén" loading="lazy">
+            <span class="card-badge card-badge--adulto">Adulto</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Negro &amp; Dorado</h3>
+            <p class="card-desc">Bandeja fibrofácil · sándwich de jamón y queso · frutillas · jugo de naranja · palta y huevo · tostadas y queso crema · infusiones · taza · arreglo con globos negro, blanco y dorado + globo burbuja con estrellas · fotos y tarjeta</p>
+            <div class="card-footer">
+              <span class="card-precio">$75.000</span>
+              <span class="card-tag">🎁 Estándar</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Negro%20y%20Dorado%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños infantil">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c5.jpg" alt="Desayuno Temático Niña con globos lila, rosa y plateado - Las Santiagueñas Plottier" loading="lazy">
+            <span class="card-badge card-badge--infantil">Infantil</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Temático Niña</h3>
+            <p class="card-desc">Bandeja fibrofácil · chocolatada · yogurt con cereal · snacks y golosinas · vasito con globo · decoración temática · arreglo con globos lila, rosa y plateado · globo número · tarjeta dedicatoria</p>
+            <div class="card-footer">
+              <span class="card-precio">$75.000</span>
+              <span class="card-tag">🎁 Estándar</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Tem%C3%A1tico%20Ni%C3%B1a%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños infantil">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c8.jpg" alt="Desayuno Stitch Rosa con vasito Stitch, globo foil Angel y arreglo violeta - Las Santiagueñas" loading="lazy">
+            <span class="card-badge card-badge--infantil">Infantil</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Stitch Rosa</h3>
+            <p class="card-desc">Bandeja fibrofácil personalizada · tostadas · scone de queso · frutillas con kiwi · yogurt granola · raspaditas corazón · sandwich jamón y queso · vasito Stitch · globo foil Stitch &amp; Angel · arreglo con globos violeta, azul y salmón · tarjeta</p>
+            <div class="card-footer">
+              <span class="card-precio">$75.000</span>
+              <span class="card-tag">🎁 Estándar</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Stitch%20Rosa%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños adulto">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c11.jpg" alt="Desayuno Violeta y Dorado con cupcake, bombones y globo burbuja mariposas - Las Santiagueñas Neuquén" loading="lazy">
+            <span class="card-badge card-badge--adulto">Adulto</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Violeta &amp; Dorado</h3>
+            <p class="card-desc">Bandeja fibrofácil · sándwich · taza · infusiones · jugo de naranja · bombones · cupcake · frutillas · sandwich primavera · arreglo con globos violeta, rosa y dorado + globo burbuja con mariposas · fotos y tarjeta</p>
+            <div class="card-footer">
+              <span class="card-precio">$75.000</span>
+              <span class="card-tag">🎁 Estándar</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Violeta%20y%20Dorado%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños infantil">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c12.jpg" alt="Desayuno Stitch Premium con mini torta decorada, globo burbuja y stickers - Las Santiagueñas" loading="lazy">
+            <span class="card-badge card-badge--infantil">Infantil</span>
+            <span class="card-badge card-badge--premium">Premium</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Stitch Premium</h3>
+            <p class="card-desc">Bandeja fibrofácil personalizada · mini torta decorada · vasito con sprinkles · gomitas · jugo · tarjetón con dedicatoria · stickers Stitch · yogurt · arreglo con globos rosa, dorado y cromado · globo burbuja</p>
+            <div class="card-footer">
+              <span class="card-precio">$85.000</span>
+              <span class="card-tag">✨ Con mini torta</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Stitch%20Premium%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños adulto">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c13.jpg" alt="Desayuno Boca Juniors con taza, mini torta y arreglo azul y dorado - Las Santiagueñas Plottier" loading="lazy">
+            <span class="card-badge card-badge--adulto">Adulto</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Boca Juniors</h3>
+            <p class="card-desc">Bandeja fibrofácil · sándwich de jamón y queso · mini torta blanca · chipa · taza · infusiones · jugo de naranja · cartelería Boca Juniors · arreglo globos azul y dorado · fotos y tarjeta</p>
+            <div class="card-footer">
+              <span class="card-precio">$75.000</span>
+              <span class="card-tag">🎁 Estándar</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Boca%20Juniors%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños adulto">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c19.jpg" alt="Desayuno Día de la Madre con flores, frutas, infusiones y tarjeta personalizada - Las Santiagueñas" loading="lazy">
+            <span class="card-badge card-badge--adulto">Adulto</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Desayuno Día de Mamá</h3>
+            <p class="card-desc">Bandeja fibrofácil · taza · sándwich primavera · yogurt con granola · frutas de estación · barrita de cereal · cookies · frutos secos · infusiones · arreglo floral especial · tarjeta dedicatoria</p>
+            <div class="card-footer">
+              <span class="card-precio">$75.000</span>
+              <span class="card-tag">🎁 Estándar</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20D%C3%ADa%20de%20Mam%C3%A1%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+        <article class="card" data-tema="Cumpleaños adulto">
+          <div class="card-img-wrap">
+            <img class="card-img" src="images/c20.jpg" alt="Desayuno Cumple Rosa y Dorado con mini torta rosa, muffin, yogurt y decoración dorada - Las Santiagueñas" loading="lazy">
+            <span class="card-badge card-badge--adulto">Adulto</span>
+            <span class="card-badge card-badge--premium">Premium</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-nombre">Cumple Rosa &amp; Dorado</h3>
+            <p class="card-desc">Bandeja fibrofácil · taza · mini torta rosa · medialunas · yogurt con fruta y granola · galletitas cookies · muffin · jugo de naranja · infusiones · frutillas · arreglo con globos rosa y dorado · tarjeta</p>
+            <div class="card-footer">
+              <span class="card-precio">$85.000</span>
+              <span class="card-tag">✨ Con mini torta</span>
+            </div>
+            <a href="https://wa.me/542995326695?text=Hola!%20Quiero%20pedir%20el%20Desayuno%20Cumple%20Rosa%20y%20Dorado%20%F0%9F%8E%80" target="_blank" rel="noopener" class="card-cta">Pedir este desayuno</a>
+          </div>
+        </article>
+
+      </div>
+      <p class="no-results hidden" id="no-results">No encontramos desayunos con esa búsqueda. <br>¡Consultanos por un diseño personalizado!</p>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="testimonials">
+    <div class="container">
+      <h2 class="section-title">Lo que dicen nuestras clientas</h2>
+      <div class="carousel-wrap">
+        <button class="carousel-btn carousel-btn--prev" aria-label="Anterior">&#8249;</button>
+        <div class="testimonials-track-wrap">
+          <div class="testimonials-track" id="testimonials-grid">
+            <!-- renderizado por main.js desde Supabase -->
+          </div>
+        </div>
+        <button class="carousel-btn carousel-btn--next" aria-label="Siguiente">&#8250;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-brand">
+        <span class="brand-icon">🎀</span>
+        <span class="brand-name-sm">Las Santiagueñas</span>
+      </div>
+      <p class="footer-desc">Desayunos sorpresa para momentos especiales · Neuquén &amp; Plottier</p>
+      <div class="footer-links">
+        <a href="https://wa.me/542995326695?text=Hola!%20Vi%20el%20cat%C3%A1logo%20y%20quiero%20consultar%20%F0%9F%8E%80" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.993l6.304-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.002-1.368l-.359-.214-3.721.976.993-3.624-.234-.372A9.818 9.818 0 1112 21.818z"/></svg>
+          +54 299 532-6695
+        </a>
+        <a href="https://instagram.com/Lassantiaguenas_" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          @Lassantiaguenas_
+        </a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Las Santiagueñas · Hecho con amor en Plottier, Neuquén</p>
+      <p class="footer-admin"><a href="admin.html">⚙️ Gestión Interna</a></p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp flotante -->
+  <a href="https://wa.me/542995326695?text=Hola!%20Vi%20el%20cat%C3%A1logo%20y%20quiero%20consultar%20%F0%9F%8E%80" target="_blank" rel="noopener" class="wa-float" aria-label="Contactar por WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.993l6.304-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.002-1.368l-.359-.214-3.721.976.993-3.624-.234-.372A9.818 9.818 0 1112 21.818z"/></svg>
+  </a>
+
+  <script src="main.js"></script>
+</body>
+</html>

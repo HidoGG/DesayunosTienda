@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin · Las Santiagueñas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:      #D4698A;
+      --rose-dark: #B54E72;
+      --rose-bg:   #FDE8F0;
+      --choco:     #2D1B12;
+      --cream:     #FDF6EE;
+      --white:     #FFFFFF;
+      --gray-1:    #F7F7F8;
+      --gray-2:    #E8E8EA;
+      --gray-3:    #9A9AA0;
+      --text:      #1A1A1F;
+      --green:     #25D366;
+      --green-bg:  #E8FAF0;
+      --red:       #E53E3E;
+      --red-bg:    #FFF5F5;
+      --font:      'Inter', system-ui, sans-serif;
+      --radius:    10px;
+      --shadow:    0 1px 8px rgba(0,0,0,0.08);
+    }
+
+    html, body { height: 100%; font-family: var(--font); background: var(--gray-1); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    .hidden { display: none !important; }
+
+    /* ── LOGIN ── */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #B84E7C, #D4698A, #F5C5A3);
+      padding: 1.5rem;
+    }
+    .login-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    }
+    .login-logo { text-align: center; margin-bottom: 1.5rem; }
+    .login-logo .icon { font-size: 2.5rem; }
+    .login-logo h1 { font-size: 1.2rem; font-weight: 700; color: var(--choco); margin-top: 0.5rem; }
+    .login-logo p  { font-size: 0.8rem; color: var(--gray-3); margin-top: 2px; }
+
+    .login-card label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 6px; margin-top: 1rem; }
+    .login-card input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-2); border-radius: var(--radius); font-size: 0.92rem; font-family: var(--font); outline: none; transition: border-color 0.2s; }
+    .login-card input:focus { border-color: var(--rose); }
+
+    .btn-login { width: 100%; margin-top: 1.5rem; background: var(--rose); color: var(--white); border: none; padding: 13px; border-radius: var(--radius); font-size: 0.95rem; font-weight: 700; font-family: var(--font); cursor: pointer; transition: background 0.2s; }
+    .btn-login:hover { background: var(--rose-dark); }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .login-error { color: var(--red); font-size: 0.8rem; margin-top: 0.75rem; text-align: center; min-height: 1.2em; }
+    .link-btn { background: none; border: none; color: var(--rose); font-size: 0.8rem; font-family: var(--font); cursor: pointer; text-decoration: underline; padding: 0; }
+    .link-btn-gray { color: var(--gray-3); }
+    .login-success { color: var(--green); font-size: 0.8rem; margin-top: 0.75rem; text-align: center; min-height: 1.2em; }
+
+    /* ── CREDENCIALES MODAL ── */
+    .creds-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+    .creds-dialog { background: var(--white); border-radius: 16px; padding: 2rem 1.5rem 1.5rem; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+    .creds-dialog h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .creds-dialog p { font-size: 0.82rem; color: var(--gray-3); margin-bottom: 1.2rem; }
+    .creds-box { background: var(--gray-1); border: 1px solid var(--gray-2); border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 8px; }
+    .creds-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .creds-label { font-size: 0.75rem; font-weight: 600; color: var(--gray-3); }
+    .creds-value { font-size: 0.88rem; font-weight: 600; color: var(--text); word-break: break-all; }
+    .creds-share { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-share-wa { flex: 1; background: #25D366; color: var(--white); border: none; padding: 11px; border-radius: var(--radius); font-size: 0.85rem; font-weight: 700; font-family: var(--font); cursor: pointer; }
+    .btn-share-mail { flex: 1; background: var(--rose-bg); color: var(--rose-dark); border: 1px solid var(--rose); padding: 11px; border-radius: var(--radius); font-size: 0.85rem; font-weight: 700; font-family: var(--font); cursor: pointer; }
+    .btn-creds-close { width: 100%; margin-top: 10px; background: var(--gray-1); color: var(--text); border: 1px solid var(--gray-2); padding: 10px; border-radius: var(--radius); font-size: 0.85rem; font-family: var(--font); cursor: pointer; }
+
+    /* ── CONFIG TAB ── */
+    .config-section { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-2); padding: 1.5rem; margin-bottom: 1.2rem; }
+    .config-section h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .config-section p { font-size: 0.8rem; color: var(--gray-3); margin-bottom: 1.2rem; }
+    .config-section .form-field { margin-bottom: 0.8rem; }
+    .config-section .form-field label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
+    .config-section .form-field input { width: 100%; padding: 10px 13px; border: 1.5px solid var(--gray-2); border-radius: var(--radius); font-size: 0.88rem; font-family: var(--font); outline: none; transition: border-color 0.2s; }
+    .config-section .form-field input:focus { border-color: var(--rose); }
+    .config-msg { font-size: 0.8rem; margin-top: 0.5rem; min-height: 1.2em; }
+
+    /* ── DASHBOARD ── */
+    .dashboard { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Header */
+    .admin-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-2);
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow);
+    }
+    .admin-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: var(--choco); }
+    .admin-brand span { color: var(--rose); font-size: 1.3rem; }
+    .admin-badge { background: var(--rose-bg); color: var(--rose-dark); font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+    .btn-logout { background: var(--gray-1); border: 1px solid var(--gray-2); color: var(--gray-3); padding: 7px 14px; border-radius: var(--radius); font-size: 0.8rem; font-family: var(--font); cursor: pointer; transition: all 0.2s; }
+    .btn-logout:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+    .btn-tienda { background: var(--rose-bg); border: 1px solid var(--rose); color: var(--rose-dark); padding: 7px 14px; border-radius: var(--radius); font-size: 0.8rem; font-weight: 600; font-family: var(--font); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-tienda:hover { background: var(--rose); color: var(--white); }
+
+    /* Tabs */
+    .tab-bar { background: var(--white); border-bottom: 1px solid var(--gray-2); display: flex; padding: 0 1.5rem; gap: 2px; }
+    .tab-btn { background: none; border: none; padding: 12px 18px; font-size: 0.85rem; font-weight: 600; font-family: var(--font); color: var(--gray-3); cursor: pointer; border-bottom: 2.5px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn:hover { color: var(--rose); }
+    .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
+
+    /* Content */
+    .admin-content { flex: 1; padding: 1.5rem; max-width: 900px; margin: 0 auto; width: 100%; }
+
+    .tab-content { display: block; }
+
+    /* Section header */
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; gap: 1rem; }
+    .section-head h2 { font-size: 1.05rem; font-weight: 700; }
+    .btn-add { background: var(--rose); color: var(--white); border: none; padding: 9px 18px; border-radius: var(--radius); font-size: 0.84rem; font-weight: 700; font-family: var(--font); cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .btn-add:hover { background: var(--rose-dark); }
+
+    /* List items */
+    .list-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .list-item { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-2); padding: 10px 14px; display: flex; align-items: center; gap: 12px; transition: box-shadow 0.2s; }
+    .list-item:hover { box-shadow: var(--shadow); }
+    .list-item.inactive { opacity: 0.55; }
+    .list-thumb { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--gray-1); }
+    .list-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--rose-bg); color: var(--rose-dark); font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .list-info { flex: 1; min-width: 0; }
+    .list-name { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-meta { font-size: 0.77rem; color: var(--gray-3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* Toggle switch */
+    .toggle-wrap { position: relative; width: 38px; height: 22px; flex-shrink: 0; cursor: pointer; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--gray-2); border-radius: 22px; transition: background 0.2s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .toggle-wrap input:checked + .toggle-slider { background: var(--green); }
+    .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+    .btn-icon { background: var(--gray-1); border: 1px solid var(--gray-2); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+    .btn-icon:hover { background: var(--gray-2); }
+    .btn-icon.btn-danger:hover { background: var(--red-bg); border-color: var(--red); }
+
+    .empty-msg { text-align: center; padding: 2.5rem; color: var(--gray-3); font-size: 0.9rem; }
+
+    /* ── STATS ── */
+    .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+    .stat-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-2); padding: 1.2rem 1rem; text-align: center; }
+    .stat-card--wa { border-color: #C6F6D5; background: var(--green-bg); }
+    .stat-number { font-size: 2rem; font-weight: 700; color: var(--choco); line-height: 1; }
+    .stat-card--wa .stat-number { color: #276749; }
+    .stat-label { font-size: 0.75rem; color: var(--gray-3); margin-top: 6px; font-weight: 500; }
+
+    .stats-section { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-2); padding: 1.2rem; margin-bottom: 1rem; }
+    .stats-section h3 { font-size: 0.88rem; font-weight: 700; margin-bottom: 1rem; }
+    .period { font-weight: 400; color: var(--gray-3); font-size: 0.8rem; }
+
+    .ranking { display: flex; flex-direction: column; gap: 8px; }
+    .rank-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--gray-1); }
+    .rank-item:last-child { border-bottom: none; }
+    .rank-num { font-size: 0.75rem; font-weight: 700; color: var(--gray-3); width: 24px; }
+    .rank-name { flex: 1; font-size: 0.85rem; font-weight: 500; }
+    .rank-count { font-size: 0.78rem; font-weight: 700; color: var(--green); background: var(--green-bg); padding: 3px 10px; border-radius: 20px; }
+
+    .hour-chart { display: flex; align-items: flex-end; gap: 3px; height: 80px; padding-bottom: 20px; position: relative; }
+    .hour-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+    .hour-bar { width: 100%; background: var(--rose-bg); border-radius: 3px 3px 0 0; min-height: 3px; transition: background 0.2s; }
+    .hour-bar-wrap:hover .hour-bar { background: var(--rose); }
+    .hour-label { font-size: 0.6rem; color: var(--gray-3); margin-top: 4px; white-space: nowrap; }
+
+    .device-split { display: flex; flex-direction: column; gap: 10px; }
+    .device-item { display: grid; grid-template-columns: 40px 1fr 80px; align-items: center; gap: 10px; }
+    .device-pct { font-size: 0.88rem; font-weight: 700; text-align: right; }
+    .device-bar { height: 10px; background: var(--rose); border-radius: 10px; transition: width 0.5s ease; }
+    .device-label { font-size: 0.82rem; color: var(--gray-3); }
+
+    /* ── MODAL ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: flex-end; justify-content: center; padding: 0; }
+    @media (min-width: 600px) { .modal-overlay { align-items: center; padding: 1.5rem; } }
+    .modal { background: var(--white); border-radius: 20px 20px 0 0; width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; }
+    @media (max-width: 599px) { .modal { max-width: 90%; width: 100%; border-radius: 20px 20px 0 0; } }
+    @media (min-width: 600px) { .modal { border-radius: 20px; max-height: 85vh; } }
+
+    /* ── CONFIRM / ALERT DIALOG ── */
+    .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.50); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+    .confirm-dialog { background: var(--white); border-radius: 16px; padding: 1.8rem 1.5rem 1.5rem; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); text-align: center; }
+    .confirm-icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+    .confirm-msg { font-size: 0.92rem; color: var(--text); line-height: 1.6; margin-bottom: 1.4rem; }
+    .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+    .btn-confirm-cancel { flex: 1; background: var(--gray-1); color: var(--text); border: 1px solid var(--gray-2); padding: 11px 16px; border-radius: var(--radius); font-size: 0.88rem; font-weight: 600; font-family: var(--font); cursor: pointer; transition: background 0.2s; }
+    .btn-confirm-cancel:hover { background: var(--gray-2); }
+    .btn-confirm-ok { flex: 1; background: var(--red); color: var(--white); border: none; padding: 11px 16px; border-radius: var(--radius); font-size: 0.88rem; font-weight: 700; font-family: var(--font); cursor: pointer; transition: background 0.2s; }
+    .btn-confirm-ok:hover { background: #C53030; }
+    .btn-confirm-ok.btn-ok-neutral { background: var(--rose); }
+    .btn-confirm-ok.btn-ok-neutral:hover { background: var(--rose-dark); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--gray-2); position: sticky; top: 0; background: var(--white); z-index: 1; }
+    .modal-title { font-size: 1rem; font-weight: 700; }
+    .modal-close { background: var(--gray-1); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .modal-body { padding: 1.2rem 1.5rem; }
+    .modal-footer { padding: 1rem 1.5rem 1.5rem; border-top: 1px solid var(--gray-2); display: flex; gap: 10px; position: sticky; bottom: 0; background: var(--white); }
+    .btn-save { flex: 1; background: var(--rose); color: var(--white); border: none; padding: 13px; border-radius: var(--radius); font-size: 0.92rem; font-weight: 700; font-family: var(--font); cursor: pointer; transition: background 0.2s; }
+    .btn-save:hover:not(:disabled) { background: var(--rose-dark); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-cancel-modal { background: var(--gray-1); color: var(--text); border: 1px solid var(--gray-2); padding: 13px 20px; border-radius: var(--radius); font-size: 0.88rem; font-family: var(--font); cursor: pointer; }
+    .btn-cancel-modal:hover { background: var(--gray-2); }
+
+    /* Formulario */
+    .form-field { margin-bottom: 1rem; }
+    .form-field label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; }
+    .form-field input, .form-field textarea, .form-field select {
+      width: 100%; padding: 10px 13px; border: 1.5px solid var(--gray-2); border-radius: var(--radius);
+      font-size: 0.88rem; font-family: var(--font); outline: none; transition: border-color 0.2s;
+      background: var(--white); color: var(--text);
+    }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: var(--rose); }
+    .form-field textarea { resize: vertical; min-height: 90px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-check label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.88rem; font-weight: 500; }
+    .form-check input { width: auto; }
+
+    /* Upload imagen */
+    .img-upload-area { border: 2px dashed var(--gray-2); border-radius: var(--radius); padding: 1.2rem; text-align: center; transition: border-color 0.2s; }
+    .img-upload-area:hover { border-color: var(--rose); }
+    .img-preview-wrap { margin-bottom: 10px; }
+    .img-preview-wrap img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; }
+    .no-img-placeholder { color: var(--gray-3); font-size: 0.85rem; padding: 1rem 0; }
+    .no-img-placeholder span { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .btn-upload { display: inline-block; background: var(--gray-1); border: 1px solid var(--gray-2); color: var(--text); padding: 8px 18px; border-radius: var(--radius); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-upload:hover { background: var(--rose-bg); border-color: var(--rose); color: var(--rose-dark); }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--choco); color: var(--white); padding: 10px 22px; border-radius: 30px; font-size: 0.85rem; font-weight: 600; z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.2); animation: toast-in 0.3s ease; white-space: nowrap; }
+    @keyframes toast-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    /* Loading */
+    .loading-state { text-align: center; padding: 3rem; color: var(--gray-3); font-size: 0.9rem; }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--gray-2); border-top-color: var(--rose); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .admin-content { padding: 1rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .list-meta { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── LOGIN ── -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+
+      <!-- Panel 1: Login normal -->
+      <div id="panel-login">
+        <div class="login-logo">
+          <div class="icon">🎀</div>
+          <h1>Las Santiagueñas</h1>
+          <p>Panel de administración</p>
+        </div>
+        <form id="login-form">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="hola@ejemplo.com" autocomplete="email" required>
+          <label for="login-password">Contraseña</label>
+          <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required>
+          <button type="submit" class="btn-login" id="btn-login">Iniciar sesión</button>
+          <p class="login-error" id="login-error"></p>
+        </form>
+        <div style="text-align:center;margin-top:1rem;">
+          <button class="link-btn" onclick="showPanel('forgot')">¿Olvidaste tu contraseña?</button>
+        </div>
+      </div>
+
+      <!-- Panel 2: Olvidé mi contraseña -->
+      <div id="panel-forgot" class="hidden">
+        <div class="login-logo">
+          <div class="icon">🔐</div>
+          <h1>Recuperar acceso</h1>
+          <p>Te enviamos un link al email</p>
+        </div>
+        <label for="reset-email">Tu email de admin</label>
+        <input type="email" id="reset-email" placeholder="hola@ejemplo.com" autocomplete="email">
+        <button class="btn-login" id="btn-reset" onclick="sendReset()">Enviar link de recuperación</button>
+        <p class="login-success" id="reset-ok"></p>
+        <p class="login-error" id="reset-error"></p>
+        <div style="text-align:center;margin-top:0.75rem;">
+          <button class="link-btn link-btn-gray" onclick="showPanel('login')">← Volver al login</button>
+        </div>
+      </div>
+
+      <!-- Panel 3: Nueva contraseña (viene del link del email) -->
+      <div id="panel-recovery" class="hidden">
+        <div class="login-logo">
+          <div class="icon">🔑</div>
+          <h1>Nueva contraseña</h1>
+          <p>Ingresá tu nueva contraseña</p>
+        </div>
+        <label for="new-pass">Nueva contraseña</label>
+        <input type="password" id="new-pass" placeholder="Mínimo 8 caracteres">
+        <label for="new-pass-confirm">Repetir contraseña</label>
+        <input type="password" id="new-pass-confirm" placeholder="Igual que la anterior">
+        <button class="btn-login" id="btn-new-pass" onclick="saveNewPassword()">Guardar nueva contraseña</button>
+        <p class="login-error" id="recovery-error"></p>
+        <p class="login-success" id="recovery-ok"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="dashboard" class="dashboard hidden">
+
+    <header class="admin-header">
+      <div class="admin-brand">
+        <span>🎀</span>
+        Las Santiagueñas
+        <span class="admin-badge">Admin</span>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <a href="index.html" class="btn-tienda">⬅️ Ver Catálogo</a>
+        <button class="btn-logout" id="btn-logout">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <nav class="tab-bar">
+      <button class="tab-btn active" data-tab="productos">📦 Productos</button>
+      <button class="tab-btn" data-tab="testimonios">💬 Testimonios</button>
+      <button class="tab-btn" data-tab="stats">📊 Estadísticas</button>
+      <button class="tab-btn" data-tab="config">⚙️ Configuración</button>
+    </nav>
+
+    <main class="admin-content">
+
+      <!-- TAB: PRODUCTOS -->
+      <section id="tab-productos" class="tab-content">
+        <div class="section-head">
+          <h2>Desayunos del catálogo</h2>
+          <button class="btn-add" onclick="openNew('productos')">+ Agregar</button>
+        </div>
+        <div class="list-wrap" id="list-productos">
+          <div class="loading-state"><div class="spinner"></div><br>Cargando...</div>
+        </div>
+      </section>
+
+      <!-- TAB: TESTIMONIOS -->
+      <section id="tab-testimonios" class="tab-content hidden">
+        <div class="section-head">
+          <h2>Testimonios de clientas</h2>
+          <button class="btn-add" onclick="openNew('testimonios')">+ Agregar</button>
+        </div>
+        <div class="list-wrap" id="list-testimonios">
+          <div class="loading-state"><div class="spinner"></div><br>Cargando...</div>
+        </div>
+      </section>
+
+      <!-- TAB: ESTADÍSTICAS -->
+      <section id="tab-stats" class="tab-content hidden">
+        <div class="section-head"><h2>Estadísticas del sitio</h2></div>
+        <div id="stats-content">
+          <div class="loading-state"><div class="spinner"></div><br>Calculando...</div>
+        </div>
+      </section>
+
+      <!-- TAB: CONFIGURACIÓN -->
+      <section id="tab-config" class="tab-content hidden">
+        <div class="section-head"><h2>Configuración</h2></div>
+
+        <!-- Cambiar contraseña -->
+        <div class="config-section">
+          <h3>🔒 Cambiar mi contraseña</h3>
+          <p>Tu contraseña actual no es necesaria, solo ingresá la nueva dos veces.</p>
+          <div class="form-field">
+            <label>Nueva contraseña</label>
+            <input type="password" id="cfg-new-pass" placeholder="Mínimo 8 caracteres">
+          </div>
+          <div class="form-field">
+            <label>Repetir nueva contraseña</label>
+            <input type="password" id="cfg-new-pass2" placeholder="Igual que la anterior">
+          </div>
+          <button class="btn-add" onclick="changeMyPassword()">Guardar contraseña</button>
+          <p class="config-msg" id="cfg-pass-msg"></p>
+        </div>
+
+        <!-- Agregar administrador -->
+        <div class="config-section">
+          <h3>👤 Agregar nuevo administrador</h3>
+          <p>Creá una cuenta para otra persona. Al guardar se muestran las credenciales para compartirlas.</p>
+          <div class="form-field">
+            <label>Email del nuevo admin</label>
+            <input type="email" id="cfg-admin-email" placeholder="admin@ejemplo.com">
+          </div>
+          <div class="form-field">
+            <label>Contraseña temporal</label>
+            <input type="password" id="cfg-admin-pass" placeholder="Mínimo 8 caracteres">
+          </div>
+          <button class="btn-add" onclick="addAdminUser()">Crear administrador</button>
+          <p class="config-msg" id="cfg-admin-msg"></p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── MODAL ── -->
+  <div id="modal" class="modal-overlay hidden">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Editar</h2>
+        <button class="modal-close" id="modal-close" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn-cancel-modal" id="modal-cancel">Cancelar</button>
+        <button class="btn-save" id="modal-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CREDENCIALES MODAL ── -->
+  <div id="creds-modal" class="creds-overlay hidden">
+    <div class="creds-dialog">
+      <h3>✅ Administrador creado</h3>
+      <p>Compartí estas credenciales con la nueva persona. Solo se muestran una vez.</p>
+      <div class="creds-box">
+        <div class="creds-row">
+          <span class="creds-label">EMAIL</span>
+          <span class="creds-value" id="creds-email"></span>
+        </div>
+        <div class="creds-row">
+          <span class="creds-label">CONTRASEÑA</span>
+          <span class="creds-value" id="creds-pass"></span>
+        </div>
+      </div>
+      <div class="creds-share">
+        <button class="btn-share-wa" onclick="shareCredsWA()">💬 Compartir por WhatsApp</button>
+        <button class="btn-share-mail" onclick="shareCredsMail()">✉️ Compartir por Email</button>
+      </div>
+      <button class="btn-creds-close" onclick="closeCredsModal()">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- ── CONFIRM DIALOG ── -->
+  <div id="confirm-modal" class="confirm-overlay hidden">
+    <div class="confirm-dialog">
+      <div class="confirm-icon" id="confirm-icon">⚠️</div>
+      <p class="confirm-msg" id="confirm-msg"></p>
+      <div class="confirm-actions">
+        <button class="btn-confirm-cancel" id="confirm-cancel">Cancelar</button>
+        <button class="btn-confirm-ok" id="confirm-ok">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
