@@ -55,9 +55,24 @@ function showAlert(msg, icon = 'ℹ️') {
 
 // ── AUTH ─────────────────────────────────────────────
 async function checkAuth() {
-  // Detectar si venimos de un link de recuperación de contraseña
-  db.auth.onAuthStateChange((event, session) => {
+  // Si la URL contiene un token de recuperación, mostrar el formulario de nueva contraseña
+  const urlHash   = window.location.hash;
+  const urlSearch = window.location.search;
+  const isRecovery = urlHash.includes('type=recovery') || urlSearch.includes('type=recovery');
+
+  if (isRecovery) {
+    showLogin();
+    // Esperar el evento de Supabase para confirmar el token
+    db.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') showPanel('recovery');
+    });
+    return;
+  }
+
+  // Flujo normal: detectar recovery si llega en cualquier momento (ej. otra pestaña)
+  db.auth.onAuthStateChange((event) => {
     if (event === 'PASSWORD_RECOVERY') {
+      showLogin();
       showPanel('recovery');
     }
   });
@@ -129,6 +144,8 @@ async function logout() {
 function showLogin() {
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('dashboard').classList.add('hidden');
+  // Asegura que se muestre el panel de login por defecto (no forgot ni recovery)
+  showPanel('login');
 }
 
 function showDashboard() {
@@ -609,21 +626,25 @@ function showToast(msg) {
 window.changeMyPassword = async () => {
   const pass  = document.getElementById('cfg-new-pass').value;
   const pass2 = document.getElementById('cfg-new-pass2').value;
-  const msgEl = document.getElementById('cfg-pass-msg');
-  msgEl.style.color = 'var(--red)';
-  msgEl.textContent = '';
+  const btn   = document.querySelector('[onclick="changeMyPassword()"]');
 
-  if (pass.length < 8)  { msgEl.textContent = 'La contraseña debe tener al menos 8 caracteres.'; return; }
-  if (pass !== pass2)   { msgEl.textContent = 'Las contraseñas no coinciden.'; return; }
+  if (pass.length < 6) { showAlert('La contraseña debe tener al menos 6 caracteres.', '⚠️'); return; }
+  if (pass !== pass2)  { showAlert('Las contraseñas no coinciden. Verificá que sean iguales.', '⚠️'); return; }
+
+  btn.textContent = 'Guardando…';
+  btn.disabled = true;
 
   const { error } = await db.auth.updateUser({ password: pass });
+
+  btn.textContent = 'Guardar contraseña';
+  btn.disabled = false;
+
   if (error) {
-    msgEl.textContent = 'Error: ' + error.message;
+    showAlert('Error al cambiar contraseña:\n' + error.message, '❌');
   } else {
-    msgEl.style.color = 'var(--green)';
-    msgEl.textContent = '✓ Contraseña actualizada correctamente.';
     document.getElementById('cfg-new-pass').value  = '';
     document.getElementById('cfg-new-pass2').value = '';
+    showAlert('✓ Contraseña actualizada correctamente.', '✅');
   }
 };
 
@@ -632,29 +653,36 @@ let _credsEmail = '', _credsPass = '';
 window.addAdminUser = async () => {
   const email  = document.getElementById('cfg-admin-email').value.trim();
   const pass   = document.getElementById('cfg-admin-pass').value;
-  const msgEl  = document.getElementById('cfg-admin-msg');
-  msgEl.style.color = 'var(--red)';
-  msgEl.textContent = '';
+  const btn    = document.querySelector('[onclick="addAdminUser()"]');
 
-  if (!email)          { msgEl.textContent = 'Ingresá el email del nuevo admin.'; return; }
-  if (pass.length < 8) { msgEl.textContent = 'La contraseña debe tener al menos 8 caracteres.'; return; }
+  // Validaciones con modal de alerta
+  if (!email)          { showAlert('Ingresá el email del nuevo admin.', '⚠️'); return; }
+  if (pass.length < 6) { showAlert('La contraseña debe tener al menos 6 caracteres.', '⚠️'); return; }
 
-  const { error } = await db.auth.signUp({ email, password: pass });
+  // Estado de carga
+  btn.textContent = 'Creando…';
+  btn.disabled = true;
+
+  const { data, error } = await db.auth.signUp({ email, password: pass });
+
+  btn.textContent = 'Crear administrador';
+  btn.disabled = false;
+
   if (error) {
-    msgEl.textContent = 'Error: ' + error.message;
+    showAlert('No se pudo crear el admin:\n' + error.message, '❌');
     return;
   }
 
+  // Limpiar campos
+  document.getElementById('cfg-admin-email').value = '';
+  document.getElementById('cfg-admin-pass').value  = '';
+
+  // Mostrar credenciales para compartir
   _credsEmail = email;
   _credsPass  = pass;
   document.getElementById('creds-email').textContent = email;
   document.getElementById('creds-pass').textContent  = pass;
   document.getElementById('creds-modal').classList.remove('hidden');
-
-  document.getElementById('cfg-admin-email').value = '';
-  document.getElementById('cfg-admin-pass').value  = '';
-  msgEl.style.color = 'var(--green)';
-  msgEl.textContent = '✓ Admin creado. Compartí las credenciales.';
 };
 
 window.closeCredsModal = () => {

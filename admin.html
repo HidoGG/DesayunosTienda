@@ -472,5 +472,13 @@
   <div id="toast" class="toast hidden"></div>
 
   <script src="admin.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+    window.addEventListener('pageshow', e => {
+      if (e.persisted) window.location.reload();
+    });
+  </script>
 </body>
 </html>

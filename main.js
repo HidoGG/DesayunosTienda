@@ -50,7 +50,10 @@ function cardHTML(p) {
       </div>
       <div class="card-body">
         <h3 class="card-nombre">${escHTML(p.nombre)}</h3>
-        <p class="card-desc">${escHTML(p.descripcion || '')}</p>
+        <div class="card-desc-wrap">
+          <p class="card-desc">${escHTML(p.descripcion || '')}</p>
+          <button class="card-read-more" aria-label="Expandir descripción">Seguir leyendo ▼</button>
+        </div>
         <div class="card-footer">
           <span class="card-precio">${escHTML(p.precio)}</span>
           <span class="card-tag">${escHTML(p.tag)}</span>
@@ -83,6 +86,26 @@ function applyFilters() {
 
   document.getElementById('no-results').classList.toggle('hidden', visible > 0);
 }
+
+// ── "Seguir leyendo" ──────────────────────────────────
+function initReadMore() {
+  // Ocultar el botón cuando el texto no está cortado
+  document.querySelectorAll('.card-desc').forEach(desc => {
+    const btn = desc.nextElementSibling;
+    if (!btn) return;
+    if (desc.scrollHeight <= desc.clientHeight + 2) {
+      btn.style.display = 'none';
+    }
+  });
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.card-read-more');
+  if (!btn) return;
+  const desc = btn.previousElementSibling;
+  const expanded = desc.classList.toggle('expanded');
+  btn.textContent = expanded ? 'Ver menos ▲' : 'Seguir leyendo ▼';
+});
 
 // ── IntersectionObserver (animación) ─────────────────
 function setupAnimations() {
@@ -225,9 +248,11 @@ async function init() {
   if (error || !productos?.length) {
     document.querySelectorAll('.card-skeleton').forEach(s => s.remove());
     setupAnimations();
+    initReadMore();
   } else {
     grid.innerHTML = productos.map(cardHTML).join('');
     setupAnimations();
+    initReadMore();
   }
 
   // Cargar testimonios
