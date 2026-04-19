@@ -475,6 +475,9 @@
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
+      navigator.serviceWorker.addEventListener('message', e => {
+        if (e.data?.type === 'RELOAD') window.location.reload();
+      });
     }
     window.addEventListener('pageshow', e => {
       if (e.persisted) window.location.reload();

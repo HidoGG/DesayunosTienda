@@ -6,11 +6,12 @@ const CACHE = 'santiaguenas-v1';
 self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', e => {
-  // Borra cachés viejos de versiones anteriores
   e.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
+      .then(() => self.clients.matchAll({ type: 'window' }))
+      .then(clients => clients.forEach(client => client.postMessage({ type: 'RELOAD' })))
   );
 });
 
