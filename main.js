@@ -35,6 +35,8 @@ function cardHTML(p) {
   const waUrl  = `https://wa.me/542995326695?text=${waMsg}`;
   const infantil = p.tema === 'Cumpleaños infantil';
   const premium  = p.tag  === '✨ Con mini torta';
+  const esCumple = p.tema === 'Cumpleaños adulto' || p.tema === 'Cumpleaños infantil';
+  const badgeTema = !esCumple ? p.tema : null;
 
   return `
     <article class="card" data-tema="${escHTML(p.tema)}">
@@ -46,7 +48,7 @@ function cardHTML(p) {
         <span class="card-badge ${infantil ? 'card-badge--infantil' : 'card-badge--adulto'}">
           ${infantil ? 'Infantil' : 'Adulto'}
         </span>
-        ${premium ? '<span class="card-badge card-badge--premium">Premium</span>' : ''}
+        ${badgeTema ? `<span class="card-badge card-badge--tema">${escHTML(badgeTema)}</span>` : premium ? '<span class="card-badge card-badge--premium">Premium</span>' : ''}
       </div>
       <div class="card-body">
         <h3 class="card-nombre">${escHTML(p.nombre)}</h3>

@@ -469,6 +469,13 @@ a { color: inherit; text-decoration: none; }
   color: #2D1B00;
 }
 
+.card-badge--tema {
+  left: auto;
+  right: 12px;
+  background: rgba(80, 140, 90, 0.90);
+  color: var(--white);
+}
+
 .card-body {
   padding: 14px 28px 24px;
   display: flex;

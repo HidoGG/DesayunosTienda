@@ -409,6 +409,8 @@ function formProducto(p) {
       <select id="f-tema">
         <option ${(!p || p.tema === 'Cumpleaños adulto') ? 'selected' : ''}>Cumpleaños adulto</option>
         <option ${p?.tema === 'Cumpleaños infantil' ? 'selected' : ''}>Cumpleaños infantil</option>
+        <option ${p?.tema === 'Brunch Grupal / Saludable' ? 'selected' : ''}>Brunch Grupal / Saludable</option>
+        <option ${p?.tema === 'Box de Regalo' ? 'selected' : ''}>Box de Regalo</option>
       </select>
     </div>
     <div class="form-field form-check">
