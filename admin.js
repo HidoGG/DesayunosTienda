@@ -208,7 +208,7 @@ function switchTab(tab) {
 // ── RENDER HELPERS ────────────────────────────────────
 function productoItemHTML(p) {
   return `
-    <div class="list-item ${p.activo ? '' : 'inactive'}" id="item-${p.id}">
+    <div class="list-item ${p.activo ? '' : 'inactive'}" id="item-${p.id}" data-id="${p.id}" data-orden="${p.orden ?? 0}">
       <img class="list-thumb" src="${escHTML(p.imagen_url || 'images/c2.jpg')}" alt="${escHTML(p.nombre)}"
            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22><rect width=%2252%22 height=%2252%22 fill=%22%23f0e6ee%22/><text x=%2226%22 y=%2232%22 text-anchor=%22middle%22 font-size=%2220%22>🍓</text></svg>'">
       <div class="list-info">
@@ -216,6 +216,10 @@ function productoItemHTML(p) {
         <div class="list-meta">${escHTML(p.precio)} · ${escHTML(p.tema ?? '')} · ${escHTML(p.tipo ?? 'Desayunos')} · ${escHTML(p.tag)}</div>
       </div>
       <div class="list-actions">
+        <div class="order-btns">
+          <button class="btn-icon btn-order" onclick="moveProducto('${p.id}','up')"   title="Subir en catálogo">↑</button>
+          <button class="btn-icon btn-order" onclick="moveProducto('${p.id}','down')" title="Bajar en catálogo">↓</button>
+        </div>
         <label class="toggle-wrap" title="${p.activo ? 'Visible' : 'Oculto'}">
           <input type="checkbox" class="toggle" ${p.activo ? 'checked' : ''}
                  onchange="toggleActivo('productos','${p.id}',this.checked)">
@@ -228,6 +232,28 @@ function productoItemHTML(p) {
       </div>
     </div>`;
 }
+
+window.moveProducto = async (id, dir) => {
+  const { data: all, error } = await db
+    .from('productos').select('id,orden').order('orden').order('id');
+  if (error || !all) return;
+
+  const idx     = all.findIndex(p => p.id === id);
+  const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+  if (idx < 0 || swapIdx < 0 || swapIdx >= all.length) return;
+
+  const a = all[idx], b = all[swapIdx];
+  // Si ambos tienen el mismo orden, asignar valores distintos basados en posición
+  const newA = a.orden !== b.orden ? b.orden : swapIdx * 10;
+  const newB = a.orden !== b.orden ? a.orden : idx * 10;
+
+  const [r1, r2] = await Promise.all([
+    db.from('productos').update({ orden: newA }).eq('id', a.id),
+    db.from('productos').update({ orden: newB }).eq('id', b.id)
+  ]);
+  if (r1.error || r2.error) { showToast('Error al reordenar. Intentá de nuevo.'); return; }
+  loadProductos();
+};
 
 function testimonioItemHTML(t) {
   return `

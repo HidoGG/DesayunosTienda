@@ -163,6 +163,9 @@ function setupAnimations() {
 }
 
 // ── Carrusel testimonios ──────────────────────────────
+let carouselTimer  = null;
+let resumeCarousel = () => {};
+
 function initCarousel() {
   const track   = document.getElementById('testimonials-grid');
   const prevBtn = document.querySelector('.carousel-btn--prev');
@@ -243,13 +246,14 @@ function initCarousel() {
     });
   }
 
-  let timer = setInterval(next, 3800);
+  resumeCarousel = () => { if (!carouselTimer) carouselTimer = setInterval(next, 3800); };
+  carouselTimer = setInterval(next, 3800);
   const wrap = document.querySelector('.testimonials-track-wrap');
   if (wrap) {
-    wrap.addEventListener('mouseenter', () => clearInterval(timer));
-    wrap.addEventListener('mouseleave', () => { timer = setInterval(next, 3800); });
-    wrap.addEventListener('focusin',    () => clearInterval(timer));
-    wrap.addEventListener('focusout',   () => { timer = setInterval(next, 3800); });
+    wrap.addEventListener('mouseenter', () => { clearInterval(carouselTimer); carouselTimer = null; });
+    wrap.addEventListener('mouseleave', resumeCarousel);
+    wrap.addEventListener('focusin',    () => { clearInterval(carouselTimer); carouselTimer = null; });
+    wrap.addEventListener('focusout',   resumeCarousel);
   }
 }
 
@@ -272,6 +276,8 @@ function initLightbox() {
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
     _trigger = triggerEl || null;
+    clearInterval(carouselTimer);
+    carouselTimer = null;
     closeBtn.focus();
   }
 
@@ -279,6 +285,7 @@ function initLightbox() {
     overlay.classList.remove('active');
     document.body.style.overflow = '';
     img.src = '';
+    resumeCarousel();
     if (_trigger) { _trigger.focus(); _trigger = null; }
   }
 
