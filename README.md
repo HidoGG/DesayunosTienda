@@ -89,3 +89,37 @@ Almacena opciones editables desde el panel sin tocar código:
 | `mensaje_wa` | Plantilla del mensaje de WhatsApp al pedir |
 | `telefono` | Número de contacto (código de país incluido, ej: +542995326695) |
 | `horario` | Horario de atención en formato Schema.org (ej: Mo-Su 08:00-20:00) |
+
+---
+
+## Tabla `audit_log`
+
+Registro inmutable de acciones críticas del admin. RLS: solo `authenticated` puede insertar y leer; nadie puede modificar ni borrar filas existentes.
+
+| accion | cuándo se registra |
+|--------|--------------------|
+| `crear_producto` | Al guardar un producto nuevo desde el modal |
+| `editar_producto` | Al guardar cambios sobre un producto existente |
+| `borrar_producto` | Al confirmar la eliminación de un producto (incluye snapshot) |
+| `borrar_testimonio` | Al eliminar un testimonio (incluye snapshot) |
+
+Consultarla desde Supabase Dashboard → Table Editor → `audit_log`.
+
+---
+
+## Columna `narrativa` en productos
+
+Campo de texto opcional que aparece en itálica rosa en la tarjeta del catálogo, encima de la descripción técnica de ingredientes. Sirve para agregar una frase emocional orientada a ventas de regalo.
+
+Ejemplo: *"Despertá a tu mamá con un desayuno lleno de amor"*
+
+Se edita desde el panel admin en el formulario de cada producto.
+
+---
+
+## Seguridad
+
+- **Auth splash:** `admin.html` muestra pantalla de carga mientras verifica la sesión — el dashboard nunca es visible sin login.
+- **Rate limit de login:** 5 intentos fallidos bloquean el formulario 15 minutos (localStorage).
+- **Headers HTTP:** CSP, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` en `vercel.json`.
+- **Link al admin:** no aparece en ninguna página pública. Acceso solo por URL directa.

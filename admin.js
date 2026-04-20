@@ -34,6 +34,19 @@ function selectOpts(seccion, valorActual, defecto) {
   }).join('');
 }
 
+// ── AUDIT LOG ────────────────────────────────────────
+async function auditLog(accion, entidad_id, datos) {
+  try {
+    const { data: { user } } = await db.auth.getUser();
+    await db.from('audit_log').insert({
+      accion,
+      entidad_id: entidad_id || null,
+      datos,
+      usuario_id: user?.id || null
+    });
+  } catch (_) {}
+}
+
 // ── MODALES PERSONALIZADOS ────────────────────────────
 function showConfirm({ icon = '⚠️', msg, okLabel = 'Eliminar', okClass = '', onOk }) {
   const overlay  = document.getElementById('confirm-modal');
@@ -747,11 +760,20 @@ async function guardar(type, id) {
       };
     }
 
-    const { error } = id
-      ? await db.from(type).update(payload).eq('id', id)
-      : await db.from(type).insert(payload);
+    let savedId = id;
+    if (id) {
+      const { error } = await db.from(type).update(payload).eq('id', id);
+      if (error) throw error;
+    } else {
+      const { data: inserted, error } = await db.from(type).insert(payload).select('id').single();
+      if (error) throw error;
+      savedId = inserted?.id;
+    }
 
-    if (error) throw error;
+    if (type === 'productos') {
+      const accion = id ? 'editar_producto' : 'crear_producto';
+      auditLog(accion, savedId, payload);
+    }
 
     closeModal();
     if (type === 'productos')   loadProductos();
@@ -789,8 +811,11 @@ window.confirmDelete = (type, id, nombre) => {
 };
 
 async function borrar(type, id) {
+  // Guardar snapshot antes de borrar para el audit log
+  const { data: snapshot } = await db.from(type).select('*').eq('id', id).single();
   const { error } = await db.from(type).delete().eq('id', id);
   if (error) { showAlert('Error: ' + error.message, '❌'); return; }
+  auditLog(`borrar_${type === 'productos' ? 'producto' : 'testimonio'}`, id, snapshot);
   if (type === 'productos')   loadProductos();
   else                        loadTestimonios();
   showToast('Eliminado ✓');

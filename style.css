@@ -375,6 +375,16 @@ a { color: inherit; text-decoration: none; }
   border-color: var(--rose);
 }
 
+.filter-btn:focus-visible {
+  outline: 2px solid var(--rose-dark);
+  outline-offset: 3px;
+}
+
+.filter-btn.active:focus-visible {
+  outline-color: var(--white);
+  outline-offset: 2px;
+}
+
 .search-wrap {
   display: flex;
   align-items: center;
@@ -604,6 +614,17 @@ a { color: inherit; text-decoration: none; }
 .card-cta:hover {
   background: #1ebe5d;
   transform: scale(1.01);
+}
+
+.card-cta:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: -4px;
+  box-shadow: 0 0 0 5px rgba(37, 211, 102, 0.5);
+}
+
+.carousel-btn:focus-visible {
+  outline: 2px solid var(--rose-dark);
+  outline-offset: 2px;
 }
 
 .no-results {

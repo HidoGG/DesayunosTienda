@@ -62,11 +62,24 @@ CREATE TABLE IF NOT EXISTS eventos (
   created_at       timestamptz DEFAULT now()
 );
 
--- 5. ROW LEVEL SECURITY
+-- 5. TABLA AUDIT LOG
+-- Registro inmutable de acciones críticas del admin.
+-- Solo INSERT permitido (nunca UPDATE/DELETE): es el historial de cambios.
+CREATE TABLE IF NOT EXISTS audit_log (
+  id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  accion      text NOT NULL,             -- 'crear_producto' | 'editar_producto' | 'borrar_producto' | 'borrar_testimonio'
+  entidad_id  uuid,                      -- id del producto/testimonio afectado
+  datos       jsonb,                     -- snapshot del payload antes/después
+  usuario_id  uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+  created_at  timestamptz DEFAULT now()
+);
+
+-- 6. ROW LEVEL SECURITY
 ALTER TABLE productos    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE testimonios  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE configuracion ENABLE ROW LEVEL SECURITY;
 ALTER TABLE eventos      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_log    ENABLE ROW LEVEL SECURITY;
 
 -- 6. POLÍTICAS (DROP IF EXISTS para idempotencia)
 
@@ -100,6 +113,12 @@ DROP POLICY IF EXISTS "cfg_anon_read" ON configuracion;
 DROP POLICY IF EXISTS "cfg_auth_all"  ON configuracion;
 CREATE POLICY "cfg_anon_read" ON configuracion FOR SELECT TO anon         USING (true);
 CREATE POLICY "cfg_auth_all"  ON configuracion FOR ALL    TO authenticated USING (true) WITH CHECK (true);
+
+-- Audit log: solo admin puede insertar y leer; nadie puede modificar ni borrar
+DROP POLICY IF EXISTS "audit_auth_insert" ON audit_log;
+DROP POLICY IF EXISTS "audit_auth_read"   ON audit_log;
+CREATE POLICY "audit_auth_insert" ON audit_log FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "audit_auth_read"   ON audit_log FOR SELECT TO authenticated USING (true);
 
 -- Eventos: cualquiera puede insertar (tracking anónimo); solo admin lee
 -- ADVERTENCIA: INSERT sin límite permite spam. Mitigar con throttle en el cliente (main.js)
