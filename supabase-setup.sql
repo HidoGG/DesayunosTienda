@@ -151,52 +151,52 @@ BEGIN
     (
       'Desayuno Stitch Azul',
       'Bandeja fibrofácil · taza · medialunas · cookies de vainilla · sandwich jamón y queso · yogurt con cereal · frutillas · jugo en botella · infusiones · stickers y decoración temática Stitch · arreglo con globos azules, lila y rosa · tarjeta personalizada',
-      '$75.000', 'Cumpleaños infantil', 'Desayunos', '🎁 Estándar', 'images/c2.jpg', 1
+      '$75.000', 'Cumpleaños infantil', 'Desayunos', '🎁 Estándar', 'images/desayuno-stitch-azul-infantil-neuquen.jpg', 1
     ),
     (
       'Stitch con Globo Gigante',
       'Bandeja fibrofácil · chocolatada · snacks · vaso decorado · globo gigante Stitch helio · arreglo con globos azules y cromados · tarjeta dedicatoria',
-      '$85.000', 'Cumpleaños infantil', 'Desayunos', '✨ Con mini torta', 'images/c3.jpg', 2
+      '$85.000', 'Cumpleaños infantil', 'Desayunos', '✨ Con mini torta', 'images/desayuno-stitch-globo-gigante-cumpleanos.jpg', 2
     ),
     (
       'Desayuno Negro & Dorado',
       'Bandeja fibrofácil · sándwich de jamón y queso · frutillas · jugo de naranja · palta y huevo · tostadas y queso crema · infusiones · taza · arreglo con globos negro, blanco y dorado + globo burbuja con estrellas · fotos y tarjeta',
-      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/c4.jpg', 3
+      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/desayuno-negro-dorado-adulto-neuquen.jpg', 3
     ),
     (
       'Desayuno Temático Niña',
       'Bandeja fibrofácil · chocolatada · yogurt con cereal · snacks y golosinas · vasito con globo · decoración temática · arreglo con globos lila, rosa y plateado · globo número · tarjeta dedicatoria',
-      '$75.000', 'Cumpleaños infantil', 'Desayunos', '🎁 Estándar', 'images/c5.jpg', 4
+      '$75.000', 'Cumpleaños infantil', 'Desayunos', '🎁 Estándar', 'images/desayuno-tematico-nina-infantil-plottier.jpg', 4
     ),
     (
       'Desayuno Stitch Rosa',
       'Bandeja fibrofácil personalizada · tostadas · scone de queso · frutillas con kiwi · yogurt granola · raspaditas corazón · sandwich jamón y queso · vasito Stitch · globo foil Stitch & Angel · arreglo con globos violeta, azul y salmón · tarjeta',
-      '$75.000', 'Cumpleaños infantil', 'Desayunos', '🎁 Estándar', 'images/c8.jpg', 5
+      '$75.000', 'Cumpleaños infantil', 'Desayunos', '🎁 Estándar', 'images/desayuno-stitch-rosa-infantil-neuquen.jpg', 5
     ),
     (
       'Desayuno Violeta & Dorado',
       'Bandeja fibrofácil · sándwich · taza · infusiones · jugo de naranja · bombones · cupcake · frutillas · sandwich primavera · arreglo con globos violeta, rosa y dorado + globo burbuja con mariposas · fotos y tarjeta',
-      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/c11.jpg', 6
+      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/desayuno-violeta-dorado-adulto-neuquen.jpg', 6
     ),
     (
       'Desayuno Stitch Premium',
       'Bandeja fibrofácil personalizada · mini torta decorada · vasito con sprinkles · gomitas · jugo · tarjetón con dedicatoria · stickers Stitch · yogurt · arreglo con globos rosa, dorado y cromado · globo burbuja',
-      '$85.000', 'Cumpleaños infantil', 'Desayunos', '✨ Con mini torta', 'images/c12.jpg', 7
+      '$85.000', 'Cumpleaños infantil', 'Desayunos', '✨ Con mini torta', 'images/desayuno-stitch-premium-infantil-neuquen.jpg', 7
     ),
     (
       'Desayuno Boca Juniors',
       'Bandeja fibrofácil · sándwich de jamón y queso · mini torta blanca · chipa · taza · infusiones · jugo de naranja · cartelería Boca Juniors · arreglo globos azul y dorado · fotos y tarjeta',
-      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/c13.jpg', 8
+      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/desayuno-boca-juniors-adulto-plottier.jpg', 8
     ),
     (
       'Desayuno Día de Mamá',
       'Bandeja fibrofácil · taza · sándwich primavera · yogurt con granola · frutas de estación · barrita de cereal · cookies · frutos secos · infusiones · arreglo floral especial · tarjeta dedicatoria',
-      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/c19.jpg', 9
+      '$75.000', 'Cumpleaños adulto', 'Desayunos', '🎁 Estándar', 'images/desayuno-dia-mama-neuquen-plottier.jpg', 9
     ),
     (
       'Cumple Rosa & Dorado',
       'Bandeja fibrofácil · taza · mini torta rosa · medialunas · yogurt con fruta y granola · galletitas cookies · muffin · jugo de naranja · infusiones · frutillas · arreglo con globos rosa y dorado · tarjeta',
-      '$85.000', 'Cumpleaños adulto', 'Desayunos', '✨ Con mini torta', 'images/c20.jpg', 10
+      '$85.000', 'Cumpleaños adulto', 'Desayunos', '✨ Con mini torta', 'images/desayuno-cumple-rosa-dorado-adulto.jpg', 10
     );
   END IF;
 END

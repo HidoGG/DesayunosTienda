@@ -222,7 +222,7 @@ function switchTab(tab) {
 function productoItemHTML(p) {
   return `
     <div class="list-item ${p.activo ? '' : 'inactive'}" id="item-${p.id}" data-id="${p.id}" data-orden="${p.orden ?? 0}">
-      <img class="list-thumb" src="${escHTML(p.imagen_url || 'images/c2.jpg')}" alt="${escHTML(p.nombre)}"
+      <img class="list-thumb" src="${escHTML(p.imagen_url || 'images/desayuno-stitch-azul-infantil-neuquen.jpg')}" alt="${escHTML(p.nombre)}"
            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22><rect width=%2252%22 height=%2252%22 fill=%22%23f0e6ee%22/><text x=%2226%22 y=%2232%22 text-anchor=%22middle%22 font-size=%2220%22>🍓</text></svg>'">
       <div class="list-info">
         <div class="list-name">${escHTML(p.nombre)}</div>
