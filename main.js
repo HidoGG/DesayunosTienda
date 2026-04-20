@@ -29,12 +29,21 @@ document.addEventListener('click', e => {
 
 // ── Render card ───────────────────────────────────────
 function cardHTML(p) {
-  const publicoLabel = (p.tema === 'Infantil' || p.tema === 'Cumpleaños infantil') ? 'Infantil' : 'Adulto';
-  const tipoLabel    = p.tipo || 'Desayunos';
-  const imagenAbsoluta = p.imagen_url?.startsWith('http') ? p.imagen_url : null;
+  const publicoLabel   = (p.tema === 'Infantil' || p.tema === 'Cumpleaños infantil') ? 'Infantil' : 'Adulto';
+  const tipoLabel      = p.tipo || 'Desayunos';
+  const imagenAbsoluta = p.imagen_url?.startsWith('http') ? p.imagen_url : '';
 
-  let waText = `¡Hola! Quiero realizar un pedido:\n\nProducto: ${p.nombre}\n\nCategoría: ${tipoLabel} - ${publicoLabel}\n\nPrecio: ${p.precio}`;
-  if (imagenAbsoluta) waText += `\n\nImagen del producto: ${imagenAbsoluta}`;
+  let waText = waMsgTemplate
+    .replace(/{nombre}/g,    p.nombre)
+    .replace(/{precio}/g,    p.precio)
+    .replace(/{tipo}/g,      tipoLabel)
+    .replace(/{categoria}/g, publicoLabel);
+
+  if (imagenAbsoluta) {
+    waText = waText.replace(/{imagen}/g, imagenAbsoluta);
+  } else {
+    waText = waText.split('\n').filter(l => !l.includes('{imagen}')).join('\n').trim();
+  }
 
   const waMsg  = encodeURIComponent(waText);
   const waUrl  = `https://wa.me/542995326695?text=${waMsg}`;
@@ -73,6 +82,7 @@ function cardHTML(p) {
 
 // ── Filtros y búsqueda ────────────────────────────────
 let activeTipo = 'Todos';
+let waMsgTemplate = '¡Hola! Quiero realizar un pedido: Producto: {nombre}\n\nImagen del producto: {imagen}';
 
 function applyFilters() {
   const q = document.getElementById('search').value.trim().toLowerCase();
@@ -241,6 +251,10 @@ function initLightbox() {
 async function init() {
   track('page_view');
   initLightbox();
+
+  // Cargar template de mensaje WA
+  const { data: msgRow } = await db.from('configuracion').select('valor').eq('seccion', 'mensaje_wa').maybeSingle();
+  if (msgRow?.valor) waMsgTemplate = msgRow.valor;
 
   // Cargar productos
   const { data: productos, error } = await db

@@ -649,14 +649,30 @@ function showToast(msg) {
 }
 
 // ── CONFIGURACIÓN DE OPCIONES ─────────────────────────
-function renderConfigTab() {
+async function renderConfigTab() {
+  const container = document.getElementById('config-opciones');
+
+  // Cargar template actual de WA
+  const { data: msgRow } = await db.from('configuracion').select('*').eq('seccion', 'mensaje_wa').maybeSingle();
+  const templateActual = msgRow?.valor || '¡Hola! Quiero realizar un pedido: Producto: {nombre}\n\nImagen del producto: {imagen}';
+
   const secciones = [
     { key: 'categoria',     titulo: '🏷️ Categorías',        desc: 'Opciones del selector "Categoría" al agregar productos (ej: Adulto, Infantil).' },
     { key: 'tipo_producto', titulo: '📦 Tipos de producto',  desc: 'Opciones del selector "Tipo de producto" y los filtros del catálogo.' },
     { key: 'etiqueta',      titulo: '✨ Etiquetas',           desc: 'Opciones del selector "Etiqueta" al agregar productos.' },
   ];
-  const container = document.getElementById('config-opciones');
-  container.innerHTML = secciones.map(s => `
+
+  const waMsgHtml = `
+    <div class="config-section">
+      <h3>💬 Mensaje de WhatsApp</h3>
+      <p>Editá el texto que recibe el cliente al hacer clic en "Pedir". Variables disponibles: <strong>{nombre}</strong>, <strong>{precio}</strong>, <strong>{tipo}</strong>, <strong>{categoria}</strong>, <strong>{imagen}</strong> (si el producto tiene foto).</p>
+      <div class="form-field">
+        <textarea id="cfg-wa-template" rows="5" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-2);border-radius:var(--radius);font-size:0.88rem;font-family:var(--font);resize:vertical;outline:none;">${escAdmin(templateActual)}</textarea>
+      </div>
+      <button class="btn-add" onclick="guardarMensajeWA()">Guardar mensaje</button>
+    </div>`;
+
+  container.innerHTML = waMsgHtml + secciones.map(s => `
     <div class="config-section">
       <h3>${s.titulo}</h3>
       <p>${s.desc}</p>
@@ -703,6 +719,17 @@ window.deleteOpcion = (id, seccion) => {
       showToast('Opción eliminada ✓');
     }
   });
+};
+
+window.guardarMensajeWA = async () => {
+  const valor = document.getElementById('cfg-wa-template').value.trim();
+  if (!valor) { showAlert('El mensaje no puede estar vacío.', '⚠️'); return; }
+  const { data: existing } = await db.from('configuracion').select('id').eq('seccion', 'mensaje_wa').maybeSingle();
+  const { error } = existing
+    ? await db.from('configuracion').update({ valor }).eq('id', existing.id)
+    : await db.from('configuracion').insert({ seccion: 'mensaje_wa', valor, orden: 0 });
+  if (error) { showAlert('Error al guardar: ' + error.message, '❌'); return; }
+  showToast('Mensaje guardado ✓');
 };
 
 // ── CONFIGURACIÓN ─────────────────────────────────────
