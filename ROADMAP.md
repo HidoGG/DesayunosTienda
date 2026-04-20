@@ -25,6 +25,9 @@ Revisarlo cuando el proyecto escale, entre nuevos colaboradores, o antes de una 
 | **Dots en carrusel de testimonios:** indicadores clicables, actualizados en cada movimiento | abril 2026 |
 | **Reordenamiento en admin:** botones ↑↓ en lista de productos intercambian `orden` en Supabase | abril 2026 |
 | **Carrusel sin CPU leak:** `carouselTimer` a nivel de módulo; se pausa al abrir lightbox | abril 2026 |
+| **Audit log:** tabla `audit_log` con RLS; registra crear/editar/borrar productos y testimonios | abril 2026 |
+| **Accesibilidad focus-visible:** outline explícito en filtros, CTA WhatsApp y botones del carrusel | abril 2026 |
+| **README completo:** secciones audit_log, narrativa, seguridad y estructura de archivos | abril 2026 |
 
 > **Pendiente de og:image:** cuando exista un `og-preview.jpg` dedicado (1200×630 real),
 > actualizar la URL en el `<head>` y alinear los metadatos de dimensiones.
@@ -100,19 +103,12 @@ tarda horas en entender el setup.
 
 ---
 
-## 7. Accesibilidad básica
+## ~~7. Accesibilidad básica~~ ✅ Resuelto (abril 2026)
 
-**Problema:** El carrusel de testimonios no es navegable con teclado.
-Los botones de filtro y el carrusel no tienen foco visible adecuado.
-
-**Estado:** El carrusel ya tiene navegación por teclado (flechas ←→) y los dots son clicables.
-Queda pendiente el `:focus-visible` en botones de filtro y revisión de contraste en `--text-muted`.
-
-**Cuándo atacarlo:** Si el negocio apunta a un público más amplio o requiere cumplir WCAG.
-
-**Qué hacer:**
-- Asegurar que todos los botones interactivos tengan `:focus-visible` con buen contraste.
-- Revisar ratio de contraste del texto sobre el fondo crema (especialmente `--text-muted`).
+~~El carrusel de testimonios no era navegable con teclado y los botones no tenían foco visible.~~
+- Carrusel navegable con flechas ←→ del teclado; dots clicables.
+- `focus-visible` explícito en `.filter-btn`, `.filter-btn.active`, `.card-cta` y `.carousel-btn`.
+- `--text-muted` (#8A6A5A sobre #FDF6EE) tiene ratio 4.6:1 — pasa WCAG AA.
 
 ---
 
@@ -122,7 +118,7 @@ Queda pendiente el `:focus-visible` en botones de filtro y revisión de contrast
 |-----------|--------|
 | 8a. Auth splash antes de renderizar contenido | ✅ Resuelto |
 | 8b. Rate limit en login (5 intentos / 15 min) | ✅ Resuelto |
-| 8c. Auditoría de acciones críticas (`audit_log`) | ⏳ Pendiente |
+| 8c. Auditoría de acciones críticas (`audit_log`) | ✅ Resuelto |
 | 8d. Headers de seguridad en Vercel (CSP, Referrer-Policy) | ✅ Resuelto |
 
 ### 8c. Auditoría de acciones críticas (pendiente)
