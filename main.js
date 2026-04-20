@@ -276,14 +276,22 @@ async function init() {
     initCarousel();
   }
 
-  // Filtros
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeTipo = btn.dataset.tipo;
-      applyFilters();
-    });
+  // Filtros — cargar opciones desde Supabase y renderizar botones
+  const { data: tiposConfig } = await db.from('configuracion')
+    .select('*').eq('seccion', 'tipo_producto').order('orden');
+  const filterBar = document.getElementById('filters');
+  if (tiposConfig?.length) {
+    filterBar.innerHTML =
+      `<button class="filter-btn active" data-tipo="Todos">Todos</button>` +
+      tiposConfig.map(t => `<button class="filter-btn" data-tipo="${escHTML(t.valor)}">${escHTML(t.valor)}</button>`).join('');
+  }
+  filterBar.addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTipo = btn.dataset.tipo;
+    applyFilters();
   });
 
   // Búsqueda

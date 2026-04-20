@@ -7,6 +7,29 @@ const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentTab = 'productos';
 let currentImgUrl  = null;
 let currentFotoUrl = null;
+let configOpciones = { categoria: [], tipo_producto: [], etiqueta: [] };
+
+function escAdmin(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+async function loadConfig() {
+  const { data } = await db.from('configuracion').select('*').order('orden');
+  configOpciones = { categoria: [], tipo_producto: [], etiqueta: [] };
+  (data || []).forEach(row => {
+    if (!configOpciones[row.seccion]) configOpciones[row.seccion] = [];
+    configOpciones[row.seccion].push(row);
+  });
+}
+
+function selectOpts(seccion, valorActual, defecto) {
+  const opts = configOpciones[seccion] || [];
+  if (!opts.length) return `<option selected>${escAdmin(valorActual || defecto)}</option>`;
+  return opts.map(o => {
+    const sel = o.valor === valorActual || (!valorActual && o.valor === defecto) ? 'selected' : '';
+    return `<option ${sel}>${escAdmin(o.valor)}</option>`;
+  }).join('');
+}
 
 // ── MODALES PERSONALIZADOS ────────────────────────────
 function showConfirm({ icon = '⚠️', msg, okLabel = 'Eliminar', okClass = '', onOk }) {
@@ -151,7 +174,7 @@ function showLogin() {
 function showDashboard() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
-  switchTab('productos');
+  loadConfig().then(() => switchTab('productos'));
 }
 
 // ── TABS ──────────────────────────────────────────────
@@ -166,7 +189,7 @@ function switchTab(tab) {
   if (tab === 'productos')   loadProductos();
   if (tab === 'testimonios') loadTestimonios();
   if (tab === 'stats')       loadStats();
-  // config no necesita carga asíncrona
+  if (tab === 'config')      loadConfig().then(renderConfigTab);
 }
 
 // ── PRODUCTOS ─────────────────────────────────────────
@@ -398,27 +421,19 @@ function formProducto(p) {
       </div>
       <div class="form-field">
         <label>Etiqueta</label>
-        <select id="f-tag">
-          <option ${(!p || p.tag === '🎁 Estándar') ? 'selected' : ''}>🎁 Estándar</option>
-          <option ${p?.tag === '✨ Con mini torta' ? 'selected' : ''}>✨ Con mini torta</option>
-        </select>
+        <select id="f-tag">${selectOpts('etiqueta', p?.tag, '🎁 Estándar')}</select>
       </div>
     </div>
     <div class="form-row">
       <div class="form-field">
         <label>Categoría</label>
-        <select id="f-tema">
-          <option ${(!p || p.tema === 'Adulto' || p.tema === 'Cumpleaños adulto') ? 'selected' : ''}>Adulto</option>
-          <option ${(p?.tema === 'Infantil' || p?.tema === 'Cumpleaños infantil') ? 'selected' : ''}>Infantil</option>
-        </select>
+        <select id="f-tema">${selectOpts('categoria',
+          p?.tema === 'Cumpleaños adulto' ? 'Adulto' : p?.tema === 'Cumpleaños infantil' ? 'Infantil' : p?.tema,
+          'Adulto')}</select>
       </div>
       <div class="form-field">
         <label>Tipo de producto</label>
-        <select id="f-tipo">
-          <option ${(!p || !p.tipo || p.tipo === 'Desayunos') ? 'selected' : ''}>Desayunos</option>
-          <option ${p?.tipo === 'Box de regalo' ? 'selected' : ''}>Box de regalo</option>
-          <option ${p?.tipo === 'Brunch grupales' ? 'selected' : ''}>Brunch grupales</option>
-        </select>
+        <select id="f-tipo">${selectOpts('tipo_producto', p?.tipo, 'Desayunos')}</select>
       </div>
     </div>
     <div class="form-field form-check">
@@ -632,6 +647,63 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.add('hidden'), 3000);
 }
+
+// ── CONFIGURACIÓN DE OPCIONES ─────────────────────────
+function renderConfigTab() {
+  const secciones = [
+    { key: 'categoria',     titulo: '🏷️ Categorías',        desc: 'Opciones del selector "Categoría" al agregar productos (ej: Adulto, Infantil).' },
+    { key: 'tipo_producto', titulo: '📦 Tipos de producto',  desc: 'Opciones del selector "Tipo de producto" y los filtros del catálogo.' },
+    { key: 'etiqueta',      titulo: '✨ Etiquetas',           desc: 'Opciones del selector "Etiqueta" al agregar productos.' },
+  ];
+  const container = document.getElementById('config-opciones');
+  container.innerHTML = secciones.map(s => `
+    <div class="config-section">
+      <h3>${s.titulo}</h3>
+      <p>${s.desc}</p>
+      <div class="config-list" id="config-list-${s.key}">
+        ${(configOpciones[s.key] || []).length
+          ? (configOpciones[s.key] || []).map(o => `
+              <div class="config-item" id="config-item-${o.id}">
+                <span>${escAdmin(o.valor)}</span>
+                <button class="btn-icon btn-danger" onclick="deleteOpcion('${o.id}','${s.key}')" title="Eliminar">🗑️</button>
+              </div>`).join('')
+          : '<p style="color:var(--gray-3);font-size:0.82rem;padding:4px 0;">Sin opciones aún.</p>'}
+      </div>
+      <div class="config-add">
+        <input type="text" id="config-input-${s.key}" placeholder="Nueva opción...">
+        <button class="btn-add" onclick="addOpcion('${s.key}')">+ Agregar</button>
+      </div>
+    </div>`).join('');
+}
+
+window.addOpcion = async (seccion) => {
+  const input = document.getElementById(`config-input-${seccion}`);
+  const valor = input.value.trim();
+  if (!valor) { showAlert('Ingresá un nombre para la opción.', '⚠️'); return; }
+  const orden = (configOpciones[seccion] || []).length + 1;
+  const { data, error } = await db.from('configuracion').insert({ seccion, valor, orden }).select().single();
+  if (error) { showAlert('Error al guardar: ' + error.message, '❌'); return; }
+  if (!configOpciones[seccion]) configOpciones[seccion] = [];
+  configOpciones[seccion].push(data);
+  input.value = '';
+  renderConfigTab();
+  showToast('Opción agregada ✓');
+};
+
+window.deleteOpcion = (id, seccion) => {
+  showConfirm({
+    icon: '🗑️',
+    msg: '¿Eliminar esta opción?\nLos productos que la tengan asignada no se verán afectados.',
+    okLabel: 'Eliminar',
+    onOk: async () => {
+      const { error } = await db.from('configuracion').delete().eq('id', id);
+      if (error) { showAlert('Error: ' + error.message, '❌'); return; }
+      configOpciones[seccion] = (configOpciones[seccion] || []).filter(o => String(o.id) !== String(id));
+      renderConfigTab();
+      showToast('Opción eliminada ✓');
+    }
+  });
+};
 
 // ── CONFIGURACIÓN ─────────────────────────────────────
 window.changeMyPassword = async () => {

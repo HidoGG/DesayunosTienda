@@ -92,6 +92,11 @@
     .config-section .form-field input { width: 100%; padding: 10px 13px; border: 1.5px solid var(--gray-2); border-radius: var(--radius); font-size: 0.88rem; font-family: var(--font); outline: none; transition: border-color 0.2s; }
     .config-section .form-field input:focus { border-color: var(--rose); }
     .config-msg { font-size: 0.8rem; margin-top: 0.5rem; min-height: 1.2em; }
+    .config-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+    .config-item { display: flex; align-items: center; justify-content: space-between; background: var(--gray-1); border: 1px solid var(--gray-2); border-radius: 8px; padding: 8px 12px; font-size: 0.88rem; font-weight: 500; }
+    .config-add { display: flex; gap: 8px; }
+    .config-add input { flex: 1; padding: 9px 13px; border: 1.5px solid var(--gray-2); border-radius: var(--radius); font-size: 0.88rem; font-family: var(--font); outline: none; transition: border-color 0.2s; }
+    .config-add input:focus { border-color: var(--rose); }
 
     /* ── DASHBOARD ── */
     .dashboard { display: flex; flex-direction: column; min-height: 100vh; }
@@ -381,6 +386,9 @@
       <!-- TAB: CONFIGURACIÓN -->
       <section id="tab-config" class="tab-content hidden">
         <div class="section-head"><h2>Configuración</h2></div>
+
+        <!-- Opciones del catálogo (dinámicas) -->
+        <div id="config-opciones"></div>
 
         <!-- Cambiar contraseña -->
         <div class="config-section">
