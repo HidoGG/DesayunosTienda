@@ -510,6 +510,10 @@ function formProducto(p) {
       <input type="text" id="f-nombre" value="${escHTML(p?.nombre || '')}" placeholder="Ej: Desayuno Stitch Azul">
     </div>
     <div class="form-field">
+      <label>Frase emocional <span style="font-weight:400;color:#9A9AA0">(aparece destacada en la tarjeta — opcional)</span></label>
+      <input type="text" id="f-narrativa" value="${escHTML(p?.narrativa || '')}" placeholder="Ej: Despertá a tu mamá con un desayuno lleno de amor">
+    </div>
+    <div class="form-field">
       <label>Descripción (ingredientes y decoración)</label>
       <textarea id="f-desc" placeholder="Bandeja fibrofácil · taza · medialunas...">${escHTML(p?.descripcion || '')}</textarea>
     </div>
@@ -674,6 +678,7 @@ async function guardar(type, id) {
 
       payload = {
         nombre,
+        narrativa:   document.getElementById('f-narrativa').value.trim() || null,
         descripcion: document.getElementById('f-desc').value.trim(),
         precio,
         tag:         document.getElementById('f-tag').value,

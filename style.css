@@ -513,6 +513,14 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.25;
 }
 
+.card-narrativa {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--rose-dark, #B54E72);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
 .card-desc-wrap {
   flex: 1;
   min-height: 0;
@@ -680,6 +688,27 @@ a { color: inherit; text-decoration: none; }
 .carousel-btn--prev { left: -22px; }
 .carousel-btn--next { right: -22px; }
 .carousel-btn:hover { background: var(--rose); color: var(--white); border-color: var(--rose); }
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.5rem;
+}
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rose-light, #F5C5D8);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s, transform 0.25s;
+}
+.carousel-dot.active {
+  background: var(--rose);
+  transform: scale(1.35);
+}
 
 .stars {
   color: #F5A623;

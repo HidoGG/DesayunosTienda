@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS productos (
 );
 
 -- Migraciones para DBs existentes
-ALTER TABLE productos ADD COLUMN IF NOT EXISTS tipo text NOT NULL DEFAULT 'Desayunos';
+ALTER TABLE productos ADD COLUMN IF NOT EXISTS tipo      text NOT NULL DEFAULT 'Desayunos';
+ALTER TABLE productos ADD COLUMN IF NOT EXISTS narrativa text;
 
 -- 2. TABLA TESTIMONIOS
 CREATE TABLE IF NOT EXISTS testimonios (

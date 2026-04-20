@@ -71,6 +71,7 @@ function cardHTML(p) {
       </div>
       <div class="card-body">
         <h3 class="card-nombre">${escHTML(p.nombre)}</h3>
+        ${p.narrativa ? `<p class="card-narrativa">${escHTML(p.narrativa)}</p>` : ''}
         <div class="card-desc-wrap">
           <p class="card-desc">${escHTML(p.descripcion || '')}</p>
           <button class="card-read-more" aria-label="Expandir descripción">Seguir leyendo ▼</button>
@@ -81,7 +82,7 @@ function cardHTML(p) {
         </div>
         <a href="${waUrl}" target="_blank" rel="noopener" class="card-cta"
            data-nombre="${escHTML(p.nombre)}" data-id="${escHTML(String(p.id ?? ''))}">
-          Pedir este desayuno
+          Pedir por WhatsApp 💬
         </a>
       </div>
     </article>`;
@@ -181,17 +182,38 @@ function initCarousel() {
     return item.offsetWidth + 24;
   }
 
+  // Dots indicadores
+  const dotsWrap = document.createElement('div');
+  dotsWrap.className = 'carousel-dots';
+  track.closest('.carousel-wrap').after(dotsWrap);
+
+  function buildDots() {
+    const count = Math.max(1, items().length - visible() + 1);
+    dotsWrap.innerHTML = Array.from({ length: count }, (_, i) =>
+      `<button class="carousel-dot${i === current ? ' active' : ''}" aria-label="Ir al testimonio ${i + 1}"></button>`
+    ).join('');
+    dotsWrap.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+      dot.addEventListener('click', () => goTo(i));
+    });
+  }
+
+  function updateDots() {
+    dotsWrap.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === current);
+    });
+  }
+
   function goTo(idx) {
     const max = items().length - visible();
     if (max <= 0) return;
     current = Math.max(0, Math.min(idx, max));
     track.style.transform = `translateX(-${current * stepPx()}px)`;
+    updateDots();
   }
 
   function next() {
     const max = items().length - visible();
     if (current >= max) {
-      // loop suave: desliza hasta el final y vuelve sin que se note
       track.style.transform = `translateX(-${max * stepPx()}px)`;
       setTimeout(() => {
         track.style.transition = 'none';
@@ -200,11 +222,15 @@ function initCarousel() {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           track.style.transition = '';
         }));
+        updateDots();
       }, 750);
     } else {
       goTo(current + 1);
     }
   }
+
+  buildDots();
+  window.addEventListener('resize', buildDots);
 
   prevBtn.addEventListener('click', () => goTo(current - 1));
   nextBtn.addEventListener('click', () => next());
