@@ -29,12 +29,17 @@ document.addEventListener('click', e => {
 
 // ── Render card ───────────────────────────────────────
 function cardHTML(p) {
-  let waText = `Hola! Quiero pedir el ${p.nombre} (${p.precio}) 🎀`;
-  if (p.imagen_url) waText += `\nFoto de referencia: ${p.imagen_url}`;
+  const publicoLabel = (p.tema === 'Infantil' || p.tema === 'Cumpleaños infantil') ? 'Infantil' : 'Adulto';
+  const tipoLabel    = p.tipo || 'Desayunos';
+  const imagenAbsoluta = p.imagen_url?.startsWith('http') ? p.imagen_url : null;
+
+  let waText = `¡Hola! Quiero realizar un pedido:\n\nProducto: ${p.nombre}\n\nCategoría: ${tipoLabel} - ${publicoLabel}\n\nPrecio: ${p.precio}`;
+  if (imagenAbsoluta) waText += `\n\nImagen del producto: ${imagenAbsoluta}`;
+
   const waMsg  = encodeURIComponent(waText);
   const waUrl  = `https://wa.me/542995326695?text=${waMsg}`;
-  const infantil = p.tema === 'Infantil' || p.tema === 'Cumpleaños infantil';
-  const tipo     = p.tipo || 'Desayunos';
+  const infantil = publicoLabel === 'Infantil';
+  const tipo     = tipoLabel;
 
   return `
     <article class="card" data-tipo="${escHTML(tipo)}">
