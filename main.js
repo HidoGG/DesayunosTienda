@@ -5,25 +5,20 @@ const { createClient } = window.supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── Analytics ────────────────────────────────────────
-// Rate limiting en memoria: evita duplicados por clic accidental o búsqueda repetida.
-// No protege contra abuso deliberado, pero es suficiente para mantener los stats limpios.
-const _rl = new Map();
+// Rate limiting via sessionStorage: persiste entre pestañas de la misma sesión,
+// evitando duplicados cuando el usuario abre el catálogo en múltiples tabs.
 function _rlAllow(key, cooldownMs) {
   const now = Date.now();
-  if (now - (_rl.get(key) ?? 0) < cooldownMs) return false;
-  _rl.set(key, now);
+  const stored = parseInt(sessionStorage.getItem('_rl_' + key) || '0', 10);
+  if (now - stored < cooldownMs) return false;
+  sessionStorage.setItem('_rl_' + key, now);
   return true;
 }
 
 async function track(tipo, extra = {}) {
-  if (tipo === 'page_view') {
-    if (sessionStorage.getItem('_pv')) return;
-    sessionStorage.setItem('_pv', '1');
-  } else {
-    const key      = tipo + ':' + (extra.producto_id || extra.termino_busqueda || '');
-    const cooldown = tipo === 'wa_click' ? 30_000 : 60_000;
-    if (!_rlAllow(key, cooldown)) return;
-  }
+  const key      = tipo === 'page_view' ? '_pv' : tipo + ':' + (extra.producto_id || extra.termino_busqueda || '');
+  const cooldown = tipo === 'page_view' ? Infinity : tipo === 'wa_click' ? 30_000 : 60_000;
+  if (!_rlAllow(key, cooldown)) return;
   try {
     await db.from('eventos').insert({
       tipo,
@@ -316,7 +311,15 @@ async function init() {
 
   const grid = document.getElementById('grid');
   if (error || !productos?.length) {
-    document.querySelectorAll('.card-skeleton').forEach(s => s.remove());
+    const phone = waPhone || '542995326695';
+    const msg = encodeURIComponent('Hola! Quiero ver el catálogo de desayunos 🎀');
+    grid.innerHTML = `
+      <div class="catalog-fallback">
+        <p>No pudimos cargar el catálogo en este momento.</p>
+        <a href="https://wa.me/${phone}?text=${msg}" target="_blank" rel="noopener" class="card-cta">
+          Ver desayunos por WhatsApp 💬
+        </a>
+      </div>`;
     setupAnimations();
     initReadMore();
   } else {

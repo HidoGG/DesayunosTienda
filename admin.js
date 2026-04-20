@@ -170,14 +170,21 @@ async function logout() {
   showLogin();
 }
 
+function hideSplash() {
+  const splash = document.getElementById('auth-splash');
+  if (splash) splash.remove();
+}
+
 function showLogin() {
+  hideSplash();
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('dashboard').classList.add('hidden');
-  // Asegura que se muestre el panel de login por defecto (no forgot ni recovery)
   showPanel('login');
+  checkLoginLockout();
 }
 
 function showDashboard() {
+  hideSplash();
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   loadConfig().then(() => switchTab('productos'));
@@ -985,10 +992,54 @@ window.copyCredsToClipboard = async () => {
 };
 
 // ── EVENT LISTENERS ───────────────────────────────────
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_MS   = 15 * 60 * 1000; // 15 minutos
+
+function checkLoginLockout() {
+  const attempts = getLoginAttempts();
+  const now = Date.now();
+  if (attempts.count >= LOGIN_MAX_ATTEMPTS && now - attempts.ts < LOGIN_LOCKOUT_MS) {
+    const btn = document.getElementById('btn-login');
+    const err = document.getElementById('login-error');
+    btn.disabled = true;
+    const tick = () => {
+      const segsRestantes = Math.ceil((LOGIN_LOCKOUT_MS - (Date.now() - attempts.ts)) / 1000);
+      if (segsRestantes <= 0) { resetLoginAttempts(); btn.disabled = false; err.textContent = ''; return; }
+      const mins = Math.floor(segsRestantes / 60);
+      const segs = segsRestantes % 60;
+      err.textContent = `Cuenta bloqueada. Esperá ${mins}m ${segs}s.`;
+      setTimeout(tick, 1000);
+    };
+    tick();
+  }
+}
+
+function getLoginAttempts() {
+  try { return JSON.parse(localStorage.getItem('_la') || '{}'); } catch { return {}; }
+}
+function setLoginAttempts(obj) {
+  try { localStorage.setItem('_la', JSON.stringify(obj)); } catch {}
+}
+function resetLoginAttempts() { try { localStorage.removeItem('_la'); } catch {} }
+
 document.getElementById('login-form').addEventListener('submit', async e => {
   e.preventDefault();
   const btn = document.getElementById('btn-login');
   const err = document.getElementById('login-error');
+
+  // Rate limit: verificar bloqueo activo
+  const attempts = getLoginAttempts();
+  const now = Date.now();
+  if (attempts.count >= LOGIN_MAX_ATTEMPTS && now - attempts.ts < LOGIN_LOCKOUT_MS) {
+    const segsRestantes = Math.ceil((LOGIN_LOCKOUT_MS - (now - attempts.ts)) / 1000);
+    const mins = Math.floor(segsRestantes / 60);
+    const segs = segsRestantes % 60;
+    err.textContent = `Demasiados intentos. Esperá ${mins}m ${segs}s antes de intentar de nuevo.`;
+    return;
+  }
+  // Si el bloqueo venció, resetear
+  if (attempts.count >= LOGIN_MAX_ATTEMPTS) resetLoginAttempts();
+
   btn.textContent = 'Ingresando…';
   btn.disabled = true;
   err.textContent = '';
@@ -997,11 +1048,23 @@ document.getElementById('login-form').addEventListener('submit', async e => {
       document.getElementById('login-email').value,
       document.getElementById('login-password').value
     );
+    resetLoginAttempts();
   } catch {
-    err.textContent = 'Email o contraseña incorrectos. Intentá de nuevo.';
+    const cur = getLoginAttempts();
+    const newCount = (cur.count || 0) + 1;
+    setLoginAttempts({ count: newCount, ts: cur.ts && cur.count ? cur.ts : now });
+    const restantes = LOGIN_MAX_ATTEMPTS - newCount;
+    if (restantes > 0) {
+      err.textContent = `Email o contraseña incorrectos. Intentos restantes: ${restantes}.`;
+    } else {
+      err.textContent = `Demasiados intentos fallidos. Cuenta bloqueada por 15 minutos.`;
+      btn.disabled = true;
+    }
   } finally {
-    btn.textContent = 'Iniciar sesión';
-    btn.disabled = false;
+    if (!btn.disabled) {
+      btn.textContent = 'Iniciar sesión';
+      btn.disabled = false;
+    }
   }
 });
 

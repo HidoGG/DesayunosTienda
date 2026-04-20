@@ -263,6 +263,12 @@
     .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--gray-2); border-top-color: var(--rose); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Auth splash */
+    .auth-splash { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; background: linear-gradient(135deg, #B84E7C, #D4698A, #F5C5A3); z-index: 9999; }
+    .auth-splash .splash-icon { font-size: 2.5rem; }
+    .auth-splash .splash-text { color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: 500; }
+    .auth-splash .spinner { border-color: rgba(255,255,255,0.3); border-top-color: white; width: 32px; height: 32px; }
+
     @media (max-width: 480px) {
       .admin-content { padding: 1rem; }
       .form-row { grid-template-columns: 1fr; }
@@ -272,8 +278,15 @@
 </head>
 <body>
 
+  <!-- ── AUTH SPLASH (visible mientras se verifica la sesión) ── -->
+  <div id="auth-splash" class="auth-splash">
+    <div class="splash-icon">🎀</div>
+    <div class="spinner"></div>
+    <p class="splash-text">Verificando sesión…</p>
+  </div>
+
   <!-- ── LOGIN ── -->
-  <div id="login-screen" class="login-screen">
+  <div id="login-screen" class="login-screen hidden">
     <div class="login-card">
 
       <!-- Panel 1: Login normal -->

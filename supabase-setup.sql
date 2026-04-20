@@ -101,6 +101,8 @@ CREATE POLICY "cfg_anon_read" ON configuracion FOR SELECT TO anon         USING 
 CREATE POLICY "cfg_auth_all"  ON configuracion FOR ALL    TO authenticated USING (true) WITH CHECK (true);
 
 -- Eventos: cualquiera puede insertar (tracking anónimo); solo admin lee
+-- ADVERTENCIA: INSERT sin límite permite spam. Mitigar con throttle en el cliente (main.js)
+-- o con una Supabase Edge Function de rate limit por IP cuando superes ~500 visitas/día.
 DROP POLICY IF EXISTS "ev_anon_insert" ON eventos;
 DROP POLICY IF EXISTS "ev_auth_read"   ON eventos;
 CREATE POLICY "ev_anon_insert" ON eventos FOR INSERT WITH CHECK (true);

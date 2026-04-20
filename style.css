@@ -609,6 +609,20 @@ a { color: inherit; text-decoration: none; }
 
 .no-results.hidden { display: none; }
 
+.catalog-fallback {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+.catalog-fallback p {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
 /* ===========================
    TESTIMONIALS
    =========================== */
