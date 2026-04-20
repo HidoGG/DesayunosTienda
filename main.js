@@ -4,14 +4,26 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = window.supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function escHTML(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+// ── Analytics ────────────────────────────────────────
+// Rate limiting en memoria: evita duplicados por clic accidental o búsqueda repetida.
+// No protege contra abuso deliberado, pero es suficiente para mantener los stats limpios.
+const _rl = new Map();
+function _rlAllow(key, cooldownMs) {
+  const now = Date.now();
+  if (now - (_rl.get(key) ?? 0) < cooldownMs) return false;
+  _rl.set(key, now);
+  return true;
 }
 
-// ── Analytics ────────────────────────────────────────
 async function track(tipo, extra = {}) {
+  if (tipo === 'page_view') {
+    if (sessionStorage.getItem('_pv')) return;
+    sessionStorage.setItem('_pv', '1');
+  } else {
+    const key      = tipo + ':' + (extra.producto_id || extra.termino_busqueda || '');
+    const cooldown = tipo === 'wa_click' ? 30_000 : 60_000;
+    if (!_rlAllow(key, cooldown)) return;
+  }
   try {
     await db.from('eventos').insert({
       tipo,
@@ -46,7 +58,7 @@ function cardHTML(p) {
   }
 
   const waMsg  = encodeURIComponent(waText);
-  const waUrl  = `https://wa.me/542995326695?text=${waMsg}`;
+  const waUrl  = `https://wa.me/${waPhone}?text=${waMsg}`;
   const infantil = publicoLabel === 'Infantil';
   const tipo     = tipoLabel;
 
@@ -81,8 +93,9 @@ function cardHTML(p) {
 }
 
 // ── Filtros y búsqueda ────────────────────────────────
-let activeTipo = 'Todos';
+let activeTipo    = 'Todos';
 let waMsgTemplate = '¡Hola! Quiero realizar un pedido: Producto: {nombre}\n\nImagen del producto: {imagen}';
+let waPhone       = '542995326695';
 
 function applyFilters() {
   const q = document.getElementById('search').value.trim().toLowerCase();
@@ -201,11 +214,21 @@ function initCarousel() {
   prevBtn.addEventListener('click', () => goTo(current - 1));
   nextBtn.addEventListener('click', () => next());
 
+  const carouselWrap = document.querySelector('.carousel-wrap');
+  if (carouselWrap) {
+    carouselWrap.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+    });
+  }
+
   let timer = setInterval(next, 3800);
   const wrap = document.querySelector('.testimonials-track-wrap');
   if (wrap) {
     wrap.addEventListener('mouseenter', () => clearInterval(timer));
     wrap.addEventListener('mouseleave', () => { timer = setInterval(next, 3800); });
+    wrap.addEventListener('focusin',    () => clearInterval(timer));
+    wrap.addEventListener('focusout',   () => { timer = setInterval(next, 3800); });
   }
 }
 
@@ -218,24 +241,29 @@ function initLightbox() {
     '<img class="lightbox-img" src="" alt="">';
   document.body.appendChild(overlay);
 
-  const img = overlay.querySelector('.lightbox-img');
+  const img        = overlay.querySelector('.lightbox-img');
+  const closeBtn   = overlay.querySelector('.lightbox-close');
+  let   _trigger   = null;
 
-  function open(src, alt) {
+  function open(src, alt, triggerEl) {
     img.src = src;
     img.alt = alt;
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+    _trigger = triggerEl || null;
+    closeBtn.focus();
   }
 
   function close() {
     overlay.classList.remove('active');
     document.body.style.overflow = '';
     img.src = '';
+    if (_trigger) { _trigger.focus(); _trigger = null; }
   }
 
   document.addEventListener('click', e => {
     const cardImg = e.target.closest('.card-img');
-    if (cardImg) open(cardImg.src, cardImg.alt);
+    if (cardImg) open(cardImg.src, cardImg.alt, cardImg);
   });
 
   overlay.addEventListener('click', e => {
@@ -252,9 +280,32 @@ async function init() {
   track('page_view');
   initLightbox();
 
-  // Cargar template de mensaje WA
-  const { data: msgRow } = await db.from('configuracion').select('valor').eq('seccion', 'mensaje_wa').maybeSingle();
-  if (msgRow?.valor) waMsgTemplate = msgRow.valor;
+  // Cargar configuración inicial: mensaje WA + datos para JSON-LD (teléfono, horario)
+  const { data: configRows } = await db.from('configuracion')
+    .select('seccion, valor')
+    .in('seccion', ['mensaje_wa', 'telefono', 'horario']);
+  const configMap = Object.fromEntries((configRows || []).map(r => [r.seccion, r.valor]));
+
+  if (configMap.mensaje_wa) waMsgTemplate = configMap.mensaje_wa;
+  if (configMap.telefono) { const t = configMap.telefono.replace(/\D/g, ''); if (t) waPhone = t; }
+
+  // Actualizar JSON-LD con valores editables desde el admin
+  const ldScript = document.querySelector('script[type="application/ld+json"]');
+  if (ldScript && (configMap.telefono || configMap.horario)) {
+    try {
+      const ld = JSON.parse(ldScript.textContent);
+      if (configMap.telefono) ld.telephone    = configMap.telefono;
+      if (configMap.horario)  ld.openingHours = configMap.horario;
+      ldScript.textContent = JSON.stringify(ld);
+    } catch (_) {}
+  }
+
+  // Unificar todos los links wa.me del HTML estático con el teléfono desde configuración
+  if (waPhone) {
+    document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
+      a.href = a.href.replace(/wa\.me\/\d+/, `wa.me/${waPhone}`);
+    });
+  }
 
   // Cargar productos
   const { data: productos, error } = await db

@@ -18,11 +18,12 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_AR">
   <meta property="og:url" content="https://las-santiaguenas.vercel.app/">
-  <meta property="og:image" content="https://las-santiaguenas.vercel.app/images/logo-og.jpg">
-  <meta property="og:image:secure_url" content="https://las-santiaguenas.vercel.app/images/logo-og.jpg">
+  <!-- Idealmente reemplazar por un asset 1200×630 horizontal para mejor preview en redes -->
+  <meta property="og:image" content="https://las-santiaguenas.vercel.app/images/c20.jpg">
+  <meta property="og:image:secure_url" content="https://las-santiaguenas.vercel.app/images/c20.jpg">
   <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="300">
-  <meta property="og:image:height" content="300">
+  <meta property="og:image:width" content="450">
+  <meta property="og:image:height" content="600">
 
   <link rel="icon" type="image/jpeg" href="images/logo-og.jpg">
 
@@ -45,7 +46,7 @@
     "@type": "FoodEstablishment",
     "name": "Las Santiagueñas",
     "description": "Desayunos sorpresa personalizados para momentos especiales con envíos a todo el Alto Valle (Neuquén, Río Negro y zonas aledañas).",
-    "url": "https://lassantiaguenas.vercel.app",
+    "url": "https://las-santiaguenas.vercel.app/",
     "telephone": "+542995326695",
     "servesCuisine": "Desayunos y meriendas",
     "priceRange": "$$",
@@ -64,6 +65,8 @@
 </head>
 
 <body>
+
+  <a href="#catalogo" class="skip-link">Saltar al contenido</a>
 
   <!-- HEADER -->
   <header class="site-header">
@@ -162,7 +165,7 @@
   </section>
 
   <!-- CATÁLOGO -->
-  <section class="catalog-section">
+  <section class="catalog-section" id="catalogo">
     <div class="container">
       <h2 class="section-title">Nuestros Desayunos</h2>
       <p class="section-subtitle">Desde $75.000 · Con mini torta desde $85.000</p>
@@ -194,9 +197,9 @@
         <div class="card-skeleton"></div>
         <div class="card-skeleton"></div>
 
-        <article class="card" data-tema="Cumpleaños infantil">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
-            <img class="card-img" src="images/c2.jpg" alt="placeholder" loading="lazy">
+            <img class="card-img" src="images/c2.jpg" alt="Desayuno Stitch Azul · desayuno sorpresa en Neuquén · Las Santiagueñas" loading="lazy">
             <span class="card-badge card-badge--infantil">Infantil</span>
           </div>
           <div class="card-body">
@@ -213,7 +216,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños infantil">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c3.jpg"
               alt="Desayuno Stitch con Globo Gigante de helio, decoración azul y cromada - Las Santiagueñas Plottier"
@@ -233,7 +236,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños adulto">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c4.jpg"
               alt="Desayuno Negro y Dorado elegante con globo burbuja y estrellas - Las Santiagueñas Neuquén"
@@ -254,7 +257,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños infantil">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c5.jpg"
               alt="Desayuno Temático Niña con globos lila, rosa y plateado - Las Santiagueñas Plottier" loading="lazy">
@@ -274,7 +277,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños infantil">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c8.jpg"
               alt="Desayuno Stitch Rosa con vasito Stitch, globo foil Angel y arreglo violeta - Las Santiagueñas"
@@ -295,7 +298,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños adulto">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c11.jpg"
               alt="Desayuno Violeta y Dorado con cupcake, bombones y globo burbuja mariposas - Las Santiagueñas Neuquén"
@@ -316,7 +319,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños infantil">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c12.jpg"
               alt="Desayuno Stitch Premium con mini torta decorada, globo burbuja y stickers - Las Santiagueñas"
@@ -338,7 +341,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños adulto">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c13.jpg"
               alt="Desayuno Boca Juniors con taza, mini torta y arreglo azul y dorado - Las Santiagueñas Plottier"
@@ -359,7 +362,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños adulto">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c19.jpg"
               alt="Desayuno Día de la Madre con flores, frutas, infusiones y tarjeta personalizada - Las Santiagueñas"
@@ -380,7 +383,7 @@
           </div>
         </article>
 
-        <article class="card" data-tema="Cumpleaños adulto">
+        <article class="card" data-tipo="Desayunos">
           <div class="card-img-wrap">
             <img class="card-img" src="images/c20.jpg"
               alt="Desayuno Cumple Rosa y Dorado con mini torta rosa, muffin, yogurt y decoración dorada - Las Santiagueñas"
@@ -403,7 +406,7 @@
         </article>
 
       </div>
-      <p class="no-results hidden" id="no-results">No encontramos desayunos con esa búsqueda. <br>¡Consultanos por un
+      <p class="no-results hidden" id="no-results" role="status" aria-live="polite">No encontramos desayunos con esa búsqueda. <br>¡Consultanos por un
         diseño personalizado!</p>
     </div>
   </section>
@@ -412,14 +415,14 @@
   <section class="testimonials">
     <div class="container">
       <h2 class="section-title">Lo que dicen nuestras clientas</h2>
-      <div class="carousel-wrap">
-        <button class="carousel-btn carousel-btn--prev" aria-label="Anterior">&#8249;</button>
+      <div class="carousel-wrap" role="region" aria-label="Testimonios de clientes" aria-roledescription="carrusel">
+        <button class="carousel-btn carousel-btn--prev" aria-label="Testimonio anterior">&#8249;</button>
         <div class="testimonials-track-wrap">
-          <div class="testimonials-track" id="testimonials-grid">
+          <div class="testimonials-track" id="testimonials-grid" aria-live="polite" aria-atomic="false">
             <!-- renderizado por main.js desde Supabase -->
           </div>
         </div>
-        <button class="carousel-btn carousel-btn--next" aria-label="Siguiente">&#8250;</button>
+        <button class="carousel-btn carousel-btn--next" aria-label="Testimonio siguiente">&#8250;</button>
       </div>
     </div>
   </section>
@@ -450,7 +453,6 @@
         </a>
       </div>
       <p class="footer-copy">&copy; 2026 Las Santiagueñas · Hecho con amor </p>
-      <p class="footer-admin"><a href="admin.html">⚙️ Gestión Interna</a></p>
     </div>
   </footer>
 
@@ -463,6 +465,7 @@
     </svg>
   </a>
 
+  <script src="shared.js"></script>
   <script src="main.js"></script>
   <script>
     // Registrar Service Worker (actualización automática en celular)

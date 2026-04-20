@@ -1,6 +1,6 @@
 // Service Worker · Las Santiagueñas
 // Estrategia: Network First — siempre intenta la red, el caché es solo fallback offline.
-const CACHE = 'santiaguenas-1776646062978';
+const CACHE = 'santiaguenas-1776659974697';
 
 // Activa inmediatamente sin esperar a que se cierren otras pestañas
 self.addEventListener('install', () => self.skipWaiting());
