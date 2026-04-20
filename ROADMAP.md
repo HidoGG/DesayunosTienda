@@ -115,4 +115,33 @@ Los botones de filtro y el carrusel no tienen foco visible adecuado.
 
 ---
 
-*Última revisión: 19 de abril 2026*
+---
+
+## 8. Mejoras de Seguridad en Panel Admin
+
+**Contexto:** El panel `admin.html` es el punto más sensible del proyecto. Cualquier brecha expone precios, pedidos y datos de clientes.
+
+**Estado actual:** Acceso por URL directa sin autenticación a nivel de ruta; la seguridad recae en Supabase RLS.
+
+**Mejoras recomendadas (por prioridad):**
+
+### 8a. Confirmación de sesión al cargar admin.html
+Verificar que `supabase.auth.getSession()` retorne una sesión válida antes de renderizar cualquier contenido. Redirigir a login si no hay sesión activa.
+
+### 8b. Rate limit en operaciones de escritura del admin
+Agregar control de intentos fallidos de login (máx. 5 intentos / 15 min) para prevenir fuerza bruta.
+
+### 8c. Auditoría de acciones críticas
+Registrar en una tabla `audit_log` (solo INSERT, nunca DELETE/UPDATE) las acciones: crear producto, eliminar producto, cambiar precio. Columnas: `accion`, `usuario_id`, `datos_previos`, `created_at`.
+
+### 8d. Headers de seguridad en Vercel
+Agregar en `vercel.json`:
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: no-referrer`
+
+**Cuándo atacarlo:** Antes de dar acceso a otro colaborador o de escalar el volumen de pedidos.
+
+---
+
+*Última revisión: 20 de abril 2026*
