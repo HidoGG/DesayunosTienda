@@ -15,24 +15,27 @@ Revisarlo cuando el proyecto escale, entre nuevos colaboradores, o antes de una 
 | Header centrado con grid `1fr auto 1fr`, backdrop-filter blur | abril 2026 |
 | Tarjetas en columna en ≤600px (imagen arriba, descripción completa) | abril 2026 |
 | Botón WhatsApp con `min-height: 44px` en todos los breakpoints | abril 2026 |
+| **Fuente única de verdad para el catálogo:** eliminadas 10 tarjetas hardcodeadas; solo skeletons + fallback WhatsApp | abril 2026 |
+| **Auth splash en admin.html:** pantalla de carga cubre UI mientras `getSession()` verifica sesión | abril 2026 |
+| **Rate limit de login admin:** 5 intentos / 15 min con countdown en tiempo real | abril 2026 |
+| **Headers de seguridad completos:** CSP, `Referrer-Policy` y `Permissions-Policy` en `vercel.json` | abril 2026 |
+| **Analytics multi-tab:** rate limit migrado de `Map` en memoria a `sessionStorage` | abril 2026 |
+| **Narrativa emocional en productos:** campo `narrativa` en DB, form admin y tarjeta del catálogo | abril 2026 |
+| **CTA claro:** botón "Pedir por WhatsApp 💬" reemplaza el ambiguo "Pedir este desayuno" | abril 2026 |
+| **Dots en carrusel de testimonios:** indicadores clicables, actualizados en cada movimiento | abril 2026 |
+| **Reordenamiento en admin:** botones ↑↓ en lista de productos intercambian `orden` en Supabase | abril 2026 |
+| **Carrusel sin CPU leak:** `carouselTimer` a nivel de módulo; se pausa al abrir lightbox | abril 2026 |
 
 > **Pendiente de og:image:** cuando exista un `og-preview.jpg` dedicado (1200×630 real),
 > actualizar la URL en el `<head>` y alinear los metadatos de dimensiones.
 
 ---
 
-## 1. Una sola fuente de verdad para el catálogo
+## ~~1. Una sola fuente de verdad para el catálogo~~ ✅ Resuelto (abril 2026)
 
-**Problema:** `index.html` tiene 10 tarjetas con precios y descripciones hardcodeadas.
-`main.js` las reemplaza cuando Supabase responde. Si un precio cambia en la DB pero no en el HTML,
-una clienta sin buena señal puede ver el precio viejo.
-
-**Cuándo atacarlo:** Antes de la primera vez que cambies un precio en producción.
-
-**Cómo resolverlo (opción simple):**
-Reemplazar las tarjetas estáticas por 3 skeletons anónimos.
-En el fallback de main.js, mostrar un mensaje directo con link a WhatsApp en lugar del catálogo estático.
-Así hay una sola fuente de verdad: Supabase.
+~~`index.html` tiene 10 tarjetas con precios y descripciones hardcodeadas.~~
+Eliminadas todas las tarjetas estáticas. El grid muestra 6 skeletons mientras carga Supabase.
+Si Supabase falla, se muestra un botón directo a WhatsApp en lugar del catálogo fantasma.
 
 ---
 
@@ -49,26 +52,22 @@ por `data-nombre` / `data-id` + listener delegado en `document`.
 **Problema:** La tabla `eventos` permite INSERT a cualquier anónimo sin límite.
 Con tráfico alto o un bot, puede llenarse de filas basura y encarecer el plan de Supabase.
 
+**Estado:** El throttle del cliente fue mejorado (sessionStorage multi-tab). El riesgo de abuso
+desde bots externos persiste hasta implementar la Edge Function.
+
 **Cuándo atacarlo:** Cuando superes ~500 visitas/día o notes crecimiento anormal en la tabla.
 
 **Cómo resolverlo:**
 - Edge Function con rate limit por IP (Supabase tiene soporte nativo).
-- O: throttle en el cliente (ya hay cierto control en el debounce de búsqueda).
 - O: muestreo — trackear 1 de cada 5 page_views en vez de todos.
 
 ---
 
-## 4. Campo `orden` en el panel admin
+## ~~4. Campo `orden` en el panel admin~~ ✅ Resuelto (abril 2026)
 
-**Problema:** La DB tiene columna `orden` para ordenar los productos,
-pero el formulario del admin no expone ese campo. Los productos nuevos
-quedan con `orden = 0` y su posición en el catálogo es impredecible.
-
-**Cuándo atacarlo:** Cuando agregues un producto nuevo y quieras controlar su posición.
-
-**Cómo resolverlo:**
-Agregar un input numérico `orden` en el formulario de admin, o botones "subir / bajar"
-en la lista de productos que intercambien los valores de orden de dos filas.
+~~Los productos nuevos quedan con `orden = 0` y su posición en el catálogo es impredecible.~~
+El formulario ya tenía input numérico con autocompletado al crear. Se agregaron botones ↑↓
+en la lista que intercambian el valor `orden` con el vecino en Supabase y recargan la vista.
 
 ---
 
@@ -106,41 +105,30 @@ tarda horas en entender el setup.
 **Problema:** El carrusel de testimonios no es navegable con teclado.
 Los botones de filtro y el carrusel no tienen foco visible adecuado.
 
+**Estado:** El carrusel ya tiene navegación por teclado (flechas ←→) y los dots son clicables.
+Queda pendiente el `:focus-visible` en botones de filtro y revisión de contraste en `--text-muted`.
+
 **Cuándo atacarlo:** Si el negocio apunta a un público más amplio o requiere cumplir WCAG.
 
 **Qué hacer:**
-- Agregar `tabindex` y manejo de flechas del teclado en el carrusel.
 - Asegurar que todos los botones interactivos tengan `:focus-visible` con buen contraste.
 - Revisar ratio de contraste del texto sobre el fondo crema (especialmente `--text-muted`).
 
 ---
 
----
+## ~~8. Mejoras de Seguridad en Panel Admin~~ ✅ Parcialmente resuelto (abril 2026)
 
-## 8. Mejoras de Seguridad en Panel Admin
+| Sub-tarea | Estado |
+|-----------|--------|
+| 8a. Auth splash antes de renderizar contenido | ✅ Resuelto |
+| 8b. Rate limit en login (5 intentos / 15 min) | ✅ Resuelto |
+| 8c. Auditoría de acciones críticas (`audit_log`) | ⏳ Pendiente |
+| 8d. Headers de seguridad en Vercel (CSP, Referrer-Policy) | ✅ Resuelto |
 
-**Contexto:** El panel `admin.html` es el punto más sensible del proyecto. Cualquier brecha expone precios, pedidos y datos de clientes.
-
-**Estado actual:** Acceso por URL directa sin autenticación a nivel de ruta; la seguridad recae en Supabase RLS.
-
-**Mejoras recomendadas (por prioridad):**
-
-### 8a. Confirmación de sesión al cargar admin.html
-Verificar que `supabase.auth.getSession()` retorne una sesión válida antes de renderizar cualquier contenido. Redirigir a login si no hay sesión activa.
-
-### 8b. Rate limit en operaciones de escritura del admin
-Agregar control de intentos fallidos de login (máx. 5 intentos / 15 min) para prevenir fuerza bruta.
-
-### 8c. Auditoría de acciones críticas
-Registrar en una tabla `audit_log` (solo INSERT, nunca DELETE/UPDATE) las acciones: crear producto, eliminar producto, cambiar precio. Columnas: `accion`, `usuario_id`, `datos_previos`, `created_at`.
-
-### 8d. Headers de seguridad en Vercel
-Agregar en `vercel.json`:
-- `X-Frame-Options: DENY`
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: no-referrer`
-
-**Cuándo atacarlo:** Antes de dar acceso a otro colaborador o de escalar el volumen de pedidos.
+### 8c. Auditoría de acciones críticas (pendiente)
+Registrar en una tabla `audit_log` (solo INSERT, nunca DELETE/UPDATE) las acciones:
+crear producto, eliminar producto, cambiar precio.
+Columnas sugeridas: `accion`, `usuario_id`, `datos_previos jsonb`, `created_at`.
 
 ---
 
