@@ -532,7 +532,7 @@ function formProducto(p) {
       <label>Foto del desayuno</label>
       <div class="img-upload-area">
         <div class="img-preview-wrap" id="preview-wrap" ${p?.imagen_url ? '' : 'style="display:none"'}>
-          <img id="img-preview" src="${escHTML(p?.imagen_url || '')}" alt="Vista previa">
+          <img id="img-preview" ${p?.imagen_url ? `src="${escHTML(p.imagen_url)}"` : ''} alt="Vista previa">
         </div>
         <div class="no-img-placeholder" id="no-img" ${p?.imagen_url ? 'style="display:none"' : ''}>
           <span>📷</span>Todavía no hay foto
@@ -612,7 +612,7 @@ function formTestimonio(t) {
       <label>Foto del cliente (opcional)</label>
       <div class="img-upload-area">
         <div class="img-preview-wrap" id="preview-wrap-t" ${t?.foto_url ? '' : 'style="display:none"'}>
-          <img id="img-preview-t" src="${escHTML(t?.foto_url || '')}" alt="Vista previa"
+          <img id="img-preview-t" ${t?.foto_url ? `src="${escHTML(t.foto_url)}"` : ''} alt="Vista previa"
                style="width:80px;height:80px;object-fit:cover;border-radius:50%;margin:0 auto 8px;">
         </div>
         <div class="no-img-placeholder" id="no-img-t" ${t?.foto_url ? 'style="display:none"' : ''}>
