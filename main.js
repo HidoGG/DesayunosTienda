@@ -36,15 +36,19 @@ document.addEventListener('click', e => {
 
 // ── Render card ───────────────────────────────────────
 function cardHTML(p) {
-  const publicoLabel   = (p.tema === 'Infantil' || p.tema === 'Cumpleaños infantil') ? 'Infantil' : 'Adulto';
+  const temaRaw   = p.tema || 'Adulto';
+  const temaLabel = temaRaw === 'Cumpleaños adulto'   ? 'Adulto'
+                  : temaRaw === 'Cumpleaños infantil' ? 'Infantil'
+                  : temaRaw;
   const tipoLabel      = p.tipo || 'Desayunos';
   const imagenAbsoluta = p.imagen_url?.startsWith('http') ? p.imagen_url : '';
+  const infantil       = /infantil/i.test(temaLabel);
 
   let waText = waMsgTemplate
     .replace(/{nombre}/g,    p.nombre)
     .replace(/{precio}/g,    p.precio)
     .replace(/{tipo}/g,      tipoLabel)
-    .replace(/{categoria}/g, publicoLabel);
+    .replace(/{categoria}/g, temaLabel);
 
   if (imagenAbsoluta) {
     waText = waText.replace(/{imagen}/g, imagenAbsoluta);
@@ -54,20 +58,18 @@ function cardHTML(p) {
 
   const waMsg  = encodeURIComponent(waText);
   const waUrl  = `https://wa.me/${waPhone}?text=${waMsg}`;
-  const infantil = publicoLabel === 'Infantil';
-  const tipo     = tipoLabel;
 
   return `
-    <article class="card" data-tipo="${escHTML(tipo)}">
+    <article class="card" data-tipo="${escHTML(tipoLabel)}" data-tema="${escHTML(temaLabel)}">
       <div class="card-img-wrap">
         <img class="card-img"
              src="${escHTML(p.imagen_url || 'images/c2.jpg')}"
              alt="${escHTML(p.nombre)} · desayuno sorpresa en Neuquén · Las Santiagueñas"
              loading="lazy">
         <span class="card-badge ${infantil ? 'card-badge--infantil' : 'card-badge--adulto'}">
-          ${infantil ? 'Infantil' : 'Adulto'}
+          ${escHTML(temaLabel)}
         </span>
-        <span class="card-badge card-badge--tema">${escHTML(tipo)}</span>
+        <span class="card-badge card-badge--tema">${escHTML(tipoLabel)}</span>
       </div>
       <div class="card-body">
         <h3 class="card-nombre">${escHTML(p.nombre)}</h3>
@@ -90,6 +92,7 @@ function cardHTML(p) {
 
 // ── Filtros y búsqueda ────────────────────────────────
 let activeTipo    = 'Todos';
+let activeTema    = 'Todos';
 let waMsgTemplate = '¡Hola! Quiero realizar un pedido: Producto: {nombre}\n\nImagen del producto: {imagen}';
 let waPhone       = '542995326695';
 
@@ -98,9 +101,10 @@ function applyFilters() {
   let visible = 0;
 
   document.querySelectorAll('.card').forEach(card => {
-    const matchTema = activeTipo === 'Todos' || card.dataset.tipo === activeTipo;
+    const matchTipo = activeTipo === 'Todos' || card.dataset.tipo === activeTipo;
+    const matchTema = activeTema === 'Todos' || card.dataset.tema === activeTema;
     const matchQ    = !q || card.textContent.toLowerCase().includes(q);
-    if (matchTema && matchQ) {
+    if (matchTipo && matchTema && matchQ) {
       card.classList.remove('hidden-card');
       visible++;
     } else {
@@ -382,9 +386,12 @@ async function init() {
     initCarousel();
   }
 
-  // Filtros — cargar opciones desde Supabase y renderizar botones
-  const { data: tiposConfig } = await db.from('configuracion')
-    .select('*').eq('seccion', 'tipo_producto').order('orden');
+  // Filtros — cargar tipos de producto y categorías desde Supabase
+  const [{ data: tiposConfig }, { data: temasConfig }] = await Promise.all([
+    db.from('configuracion').select('*').eq('seccion', 'tipo_producto').order('orden'),
+    db.from('configuracion').select('*').eq('seccion', 'categoria').order('orden'),
+  ]);
+
   const filterBar = document.getElementById('filters');
   if (tiposConfig?.length) {
     filterBar.innerHTML =
@@ -399,6 +406,22 @@ async function init() {
     activeTipo = btn.dataset.tipo;
     applyFilters();
   });
+
+  const filterTema = document.getElementById('filters-tema');
+  if (temasConfig?.length && filterTema) {
+    filterTema.innerHTML =
+      `<button class="filter-btn active" data-tema="Todos">Todos</button>` +
+      temasConfig.map(t => `<button class="filter-btn" data-tema="${escHTML(t.valor)}">${escHTML(t.valor)}</button>`).join('');
+    filterTema.style.display = '';
+    filterTema.addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      filterTema.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTema = btn.dataset.tema;
+      applyFilters();
+    });
+  }
 
   // Búsqueda
   let searchTimer;
