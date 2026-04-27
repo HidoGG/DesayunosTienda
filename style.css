@@ -463,6 +463,8 @@ a { color: inherit; text-decoration: none; }
   flex: 0 0 250px;
 }
 
+.card-img-wrap picture { display: block; width: 100%; height: 100%; }
+
 .card-img {
   width: 100%;
   height: 100%;

@@ -61,14 +61,18 @@ function cardHTML(p) {
   const waMsg  = encodeURIComponent(waText);
   const waUrl  = `https://wa.me/${waPhone}?text=${waMsg}`;
 
+  const imgSrc  = p.imagen_url || 'images/desayuno-cumple-rosa-dorado-adulto.jpg';
+  const imgAlt  = `${escHTML(p.nombre)} · desayuno sorpresa en Neuquén · Las Santiagueñas`;
+  const isLocal = !imgSrc.startsWith('http');
+  const webpSrc = isLocal ? imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp') : null;
+  const imgTag  = webpSrc
+    ? `<picture><source srcset="${escHTML(webpSrc)}" type="image/webp"><img class="card-img" src="${escHTML(imgSrc)}" alt="${imgAlt}" loading="lazy"></picture>`
+    : `<img class="card-img" src="${escHTML(imgSrc)}" alt="${imgAlt}" loading="lazy">`;
+
   return `
     <article class="card" data-tipo="${escHTML(tipoLabel)}" data-tema="${escHTML(temaLabel)}">
       <div class="card-img-wrap">
-        <img class="card-img"
-             src="${escHTML(p.imagen_url || 'images/desayuno-cumple-rosa-dorado-adulto.jpg')}"
-             alt="${escHTML(p.nombre)} · desayuno sorpresa en Neuquén · Las Santiagueñas"
-             loading="lazy"
-             onerror="this.onerror=null;this.src='images/desayuno-cumple-rosa-dorado-adulto.jpg'">
+        ${imgTag}
         <span class="card-badge ${infantil ? 'card-badge--infantil' : 'card-badge--adulto'}">
           ${escHTML(temaLabel)}
         </span>
@@ -387,6 +391,22 @@ async function init() {
         <cite>— ${escHTML(t.nombre)}${t.ciudad ? ', ' + escHTML(t.ciudad) : ''}</cite>
       </div>`).join('');
     initCarousel();
+
+    // Actualizar aggregateRating en JSON-LD con conteo real de reseñas
+    const ldScript = document.querySelector('script[type="application/ld+json"]');
+    if (ldScript) {
+      try {
+        const ld = JSON.parse(ldScript.textContent);
+        ld.aggregateRating = {
+          '@type':       'AggregateRating',
+          'ratingValue': '5',
+          'bestRating':  '5',
+          'worstRating': '1',
+          'reviewCount': String(testimonios.length)
+        };
+        ldScript.textContent = JSON.stringify(ld);
+      } catch (_) {}
+    }
   }
 
   // Filtros — cargar tipos de producto y categorías desde Supabase
