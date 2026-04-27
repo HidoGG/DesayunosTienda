@@ -131,7 +131,7 @@ CREATE POLICY "ev_auth_read"   ON eventos FOR SELECT TO authenticated USING (tru
 -- 7. STORAGE BUCKET (fotos de desayunos)
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('desayunos', 'desayunos', true)
-ON CONFLICT DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET public = true;
 
 DROP POLICY IF EXISTS "storage_public_read" ON storage.objects;
 DROP POLICY IF EXISTS "storage_auth_insert" ON storage.objects;

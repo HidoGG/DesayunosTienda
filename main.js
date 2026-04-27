@@ -41,7 +41,9 @@ function cardHTML(p) {
                   : temaRaw === 'Cumpleaños infantil' ? 'Infantil'
                   : temaRaw;
   const tipoLabel      = p.tipo || 'Desayunos';
-  const imagenAbsoluta = p.imagen_url?.startsWith('http') ? p.imagen_url : '';
+  const imagenAbsoluta = p.imagen_url
+    ? (p.imagen_url.startsWith('http') ? p.imagen_url : `${location.origin}/${p.imagen_url}`)
+    : '';
   const infantil       = /infantil/i.test(temaLabel);
 
   let waText = waMsgTemplate
@@ -63,9 +65,10 @@ function cardHTML(p) {
     <article class="card" data-tipo="${escHTML(tipoLabel)}" data-tema="${escHTML(temaLabel)}">
       <div class="card-img-wrap">
         <img class="card-img"
-             src="${escHTML(p.imagen_url || 'images/c2.jpg')}"
+             src="${escHTML(p.imagen_url || 'images/desayuno-cumple-rosa-dorado-adulto.jpg')}"
              alt="${escHTML(p.nombre)} · desayuno sorpresa en Neuquén · Las Santiagueñas"
-             loading="lazy">
+             loading="lazy"
+             onerror="this.onerror=null;this.src='images/desayuno-cumple-rosa-dorado-adulto.jpg'">
         <span class="card-badge ${infantil ? 'card-badge--infantil' : 'card-badge--adulto'}">
           ${escHTML(temaLabel)}
         </span>
