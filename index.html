@@ -19,12 +19,21 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_AR">
   <meta property="og:url" content="https://las-santiaguenas.vercel.app/">
-  <!-- og:image: reemplazar por og-preview.jpg (1200×630) cuando esté disponible -->
-  <meta property="og:image" content="https://las-santiaguenas.vercel.app/images/desayuno-cumple-rosa-dorado-adulto.jpg">
-  <meta property="og:image:secure_url" content="https://las-santiaguenas.vercel.app/images/desayuno-cumple-rosa-dorado-adulto.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="450">
-  <meta property="og:image:height" content="600">
+  <meta property="og:image" content="https://las-santiaguenas.vercel.app/images/FotoEtiqueta.png">
+  <meta property="og:image:secure_url" content="https://las-santiaguenas.vercel.app/images/FotoEtiqueta.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1536">
+  <meta property="og:image:height" content="1024">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Las Santiagueñas · Desayunos Sorpresa en el Alto Valle">
+  <meta name="twitter:description" content="Desayunos sorpresa con envíos a todo el Alto Valle (Neuquén, Río Negro y zonas aledañas). ¡Hacé tu pedido por WhatsApp!">
+  <meta name="twitter:image" content="https://las-santiaguenas.vercel.app/images/FotoEtiqueta.png">
+
+  <!-- Geo local (SEO local Neuquén) -->
+  <meta name="geo.region" content="AR-Q">
+  <meta name="geo.placename" content="Plottier, Neuquén, Argentina">
 
   <link rel="icon" type="image/jpeg" href="images/logo-og.jpg">
 
@@ -38,7 +47,7 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <!-- JSON-LD SEO Local -->
   <script type="application/ld+json">
@@ -57,10 +66,16 @@
       "addressRegion": "Neuquén",
       "addressCountry": "AR"
     },
+    "image": "https://las-santiaguenas.vercel.app/images/FotoEtiqueta.png",
     "sameAs": [
       "https://instagram.com/Lassantiaguenas_"
     ],
-    "openingHours": "Mo-Su 08:00-20:00"
+    "openingHours": "Mo-Su 08:00-20:00",
+    "areaServed": [
+      { "@type": "City", "name": "Plottier" },
+      { "@type": "City", "name": "Neuquén" },
+      { "@type": "City", "name": "Cipolletti" }
+    ]
   }
   </script>
 </head>
@@ -315,8 +330,8 @@
     </svg>
   </a>
 
-  <script src="shared.js"></script>
-  <script src="main.js"></script>
+  <script defer src="shared.js"></script>
+  <script defer src="main.js"></script>
   <script>
     // Registrar Service Worker (actualización automática en celular)
     if ('serviceWorker' in navigator) {

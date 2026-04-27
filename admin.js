@@ -823,7 +823,8 @@ async function borrar(type, id) {
 
 function closeModal() {
   document.getElementById('modal').classList.add('hidden');
-  currentImgUrl = null;
+  currentImgUrl  = null;
+  currentFotoUrl = null;
 }
 
 let toastTimer;
@@ -973,7 +974,7 @@ window.changeMyPassword = async () => {
   const pass2 = document.getElementById('cfg-new-pass2').value;
   const btn   = document.querySelector('[onclick="changeMyPassword()"]');
 
-  if (pass.length < 6) { showAlert('La contraseña debe tener al menos 6 caracteres.', '⚠️'); return; }
+  if (pass.length < 8) { showAlert('La contraseña debe tener al menos 8 caracteres.', '⚠️'); return; }
   if (pass !== pass2)  { showAlert('Las contraseñas no coinciden. Verificá que sean iguales.', '⚠️'); return; }
 
   btn.textContent = 'Guardando…';
@@ -1002,7 +1003,7 @@ window.addAdminUser = async () => {
 
   // Validaciones con modal de alerta
   if (!email)          { showAlert('Ingresá el email del nuevo admin.', '⚠️'); return; }
-  if (pass.length < 6) { showAlert('La contraseña debe tener al menos 6 caracteres.', '⚠️'); return; }
+  if (pass.length < 8) { showAlert('La contraseña debe tener al menos 8 caracteres.', '⚠️'); return; }
 
   // Estado de carga
   btn.textContent = 'Creando…';

@@ -7,7 +7,7 @@
   <title>Panel Admin · Las Santiagueñas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -497,8 +497,8 @@
   <!-- ── TOAST ── -->
   <div id="toast" class="toast hidden"></div>
 
-  <script src="shared.js"></script>
-  <script src="admin.js"></script>
+  <script defer src="shared.js"></script>
+  <script defer src="admin.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
