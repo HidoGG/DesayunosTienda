@@ -40,26 +40,8 @@ function cardHTML(p) {
   const temaLabel = temaRaw === 'Cumpleaños adulto'   ? 'Adulto'
                   : temaRaw === 'Cumpleaños infantil' ? 'Infantil'
                   : temaRaw;
-  const tipoLabel      = p.tipo || 'Desayunos';
-  const imagenAbsoluta = p.imagen_url
-    ? (p.imagen_url.startsWith('http') ? p.imagen_url : `${location.origin}/${p.imagen_url}`)
-    : '';
-  const infantil       = /infantil/i.test(temaLabel);
-
-  let waText = waMsgTemplate
-    .replace(/{nombre}/g,    p.nombre)
-    .replace(/{precio}/g,    p.precio)
-    .replace(/{tipo}/g,      tipoLabel)
-    .replace(/{categoria}/g, temaLabel);
-
-  if (imagenAbsoluta) {
-    waText = waText.replace(/{imagen}/g, imagenAbsoluta);
-  } else {
-    waText = waText.split('\n').filter(l => !l.includes('{imagen}')).join('\n').trim();
-  }
-
-  const waMsg  = encodeURIComponent(waText);
-  const waUrl  = `https://wa.me/${waPhone}?text=${waMsg}`;
+  const tipoLabel = p.tipo || 'Desayunos';
+  const infantil  = /infantil/i.test(temaLabel);
 
   const imgSrc  = p.imagen_url || 'images/desayuno-cumple-rosa-dorado-adulto.jpg';
   const imgAlt  = `${escHTML(p.nombre)} · desayuno sorpresa en Neuquén · Las Santiagueñas`;
@@ -77,22 +59,16 @@ function cardHTML(p) {
           ${escHTML(temaLabel)}
         </span>
         <span class="card-badge card-badge--tema">${escHTML(tipoLabel)}</span>
-      </div>
-      <div class="card-body">
-        <h3 class="card-nombre">${escHTML(p.nombre)}</h3>
-        ${p.narrativa ? `<p class="card-narrativa">${escHTML(p.narrativa)}</p>` : ''}
-        <div class="card-desc-wrap">
+        <div class="card-gradient"></div>
+        <div class="card-overlay">
+          <h3 class="card-nombre">${escHTML(p.nombre)}</h3>
+          <button class="card-sabermas" aria-label="Ver descripción del desayuno">Saber más ▲</button>
+        </div>
+        <div class="card-panel" aria-hidden="true">
+          ${p.narrativa ? `<p class="card-narrativa">${escHTML(p.narrativa)}</p>` : ''}
           <p class="card-desc">${escHTML(p.descripcion || '')}</p>
-          <button class="card-read-more" aria-label="Expandir descripción">Seguir leyendo ▼</button>
+          <button class="card-sabermenos" aria-label="Ocultar descripción">Saber menos ▼</button>
         </div>
-        <div class="card-footer">
-          <span class="card-precio">${escHTML(p.precio)}</span>
-          <span class="card-tag">${escHTML(p.tag)}</span>
-        </div>
-        <a href="${waUrl}" target="_blank" rel="noopener" class="card-cta"
-           data-nombre="${escHTML(p.nombre)}" data-id="${escHTML(String(p.id ?? ''))}">
-          Pedir por WhatsApp 💬
-        </a>
       </div>
     </article>`;
 }
@@ -122,24 +98,23 @@ function applyFilters() {
   document.getElementById('no-results').classList.toggle('hidden', visible > 0);
 }
 
-// ── "Seguir leyendo" ──────────────────────────────────
-function initReadMore() {
-  // Ocultar el botón cuando el texto no está cortado
-  document.querySelectorAll('.card-desc').forEach(desc => {
-    const btn = desc.nextElementSibling;
-    if (!btn) return;
-    if (desc.scrollHeight <= desc.clientHeight + 2) {
-      btn.style.display = 'none';
-    }
-  });
-}
+// ── Panel "Saber más / Saber menos" ───────────────────
+function initCardPanels() {}
 
 document.addEventListener('click', e => {
-  const btn = e.target.closest('.card-read-more');
-  if (!btn) return;
-  const desc = btn.previousElementSibling;
-  const expanded = desc.classList.toggle('expanded');
-  btn.textContent = expanded ? 'Ver menos ▲' : 'Seguir leyendo ▼';
+  if (e.target.closest('.card-sabermas')) {
+    const card = e.target.closest('.card');
+    card.querySelector('.card-panel').classList.add('open');
+    card.querySelector('.card-panel').setAttribute('aria-hidden', 'false');
+    card.querySelector('.card-overlay').classList.add('hidden');
+    return;
+  }
+  if (e.target.closest('.card-sabermenos')) {
+    const card = e.target.closest('.card');
+    card.querySelector('.card-panel').classList.remove('open');
+    card.querySelector('.card-panel').setAttribute('aria-hidden', 'true');
+    card.querySelector('.card-overlay').classList.remove('hidden');
+  }
 });
 
 // ── IntersectionObserver (animación) ─────────────────
@@ -302,7 +277,10 @@ function initLightbox() {
 
   document.addEventListener('click', e => {
     const cardImg = e.target.closest('.card-img');
-    if (cardImg) open(cardImg.src, cardImg.alt, cardImg);
+    if (!cardImg) return;
+    const card = cardImg.closest('.card');
+    if (card && card.querySelector('.card-panel.open')) return;
+    open(cardImg.src, cardImg.alt, cardImg);
   });
 
   overlay.addEventListener('click', e => {
@@ -365,11 +343,11 @@ async function init() {
         </a>
       </div>`;
     setupAnimations();
-    initReadMore();
+    initCardPanels();
   } else {
     grid.innerHTML = productos.map(cardHTML).join('');
     setupAnimations();
-    initReadMore();
+    initCardPanels();
   }
 
   // Cargar testimonios
